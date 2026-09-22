@@ -1,7 +1,9 @@
 import express, { type Express, type Request, type Response } from 'express';
+import cors from 'cors';
 // creates express application
 const app: Express = express();
-
+app.use(cors());
+app.use(express.json()); 
 type Todo = {
     id : number,
     name : string,
@@ -45,6 +47,27 @@ app.get('/todos/:id',(req: Request, res: Response)=> {
         res.status(404).send("No such task")
     }
     
+})
+
+// post request
+app.post('/todos',(req:Request,res:Response)=>{
+    try{
+        if(typeof req.body.name === 'string' && req.body.name.trim()){
+            const newTask  = {
+            id : todoList.length+1,
+            name: req.body.name,
+            completed: false
+        };
+        todoList.push(newTask)
+        res.status(201).json(newTask);}
+        else{
+            res.status(400).send("Empty Name")
+        }
+        }
+        
+    catch(error){
+        res.status(500).send("Failed to create todo");
+    }
 })
 
 //  server start

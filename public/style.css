@@ -1,0 +1,41 @@
+        /* 🎨 Force light background and dark text so everything is visible */
+        body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        /* 💡 Style labels explicitly to ensure high visibility */
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+            color: #000000 !important; /* Force black text */
+            font-size: 16px;
+        }
+
+        input {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 15px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
