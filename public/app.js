@@ -55,7 +55,7 @@ async function LoadTodos() {
 async function displayTodos(){
     const todos = await LoadTodos();
     const todoListElement = document.getElementById('todo-list');
-    todoListElement.innerHTML = '';
+    todoListElement.textContent = '';
     if (todos.length === 0) {
         todoListElement.innerHTML = '<li>No tasks found</li>'
         return;
@@ -64,6 +64,8 @@ async function displayTodos(){
         const li = document.createElement('li');
         const checkbox = document.createElement('input');
         const textSpan = document.createElement('span');
+        const deleteButton = document.createElement('button')
+        deleteButton.innerHTML = "Delete"
         checkbox.type ='checkbox'
         checkbox.checked = todo.completed
         textSpan.textContent = todo.name;
@@ -81,8 +83,17 @@ async function displayTodos(){
             }
             
         });
+        deleteButton.addEventListener('click',async ()=>{
+            const result = await deleteTodo(todo.id)
+            if(result){
+                li.remove();
+            }else{
+                console.log("Failed to delete todo")
+            }
+        })
         li.appendChild(checkbox);
-        li.appendChild(textSpan)
+        li.appendChild(textSpan);
+        li.appendChild(deleteButton);
         todoListElement.appendChild(li)
     })
 }
@@ -105,6 +116,24 @@ async function toggleTodoStatus(id, isCompleted){
         }
     }catch(error){
         console.log("todo status was not updated: ", error)
+        return false;
+    }
+}
+
+async function deleteTodo(id) {
+    try{
+        const response = await fetch(`http://localhost:3000/todos/${id}`,{
+            method:"DELETE",
+        })
+        if(response.ok){
+            console.log("Task deleted sucessfully")
+            return true;
+        }else{
+            console.log("server error: ", await response.text())
+            return false;
+        }
+    }catch(error){
+        console.log("todo was not deleted", error)
         return false;
     }
 }
