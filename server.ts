@@ -70,6 +70,27 @@ app.post('/todos',(req:Request,res:Response)=>{
     }
 })
 
+// patch route
+
+app.patch('/todos/:id',(req:Request,res:Response)=>{
+    try{
+        const todo = todoList.find(todo => todo.id === Number(req.params.id));
+        if(todo){
+            if ( typeof req.body.completed === "boolean"){
+                todo.completed = req.body.completed
+                res.status(200).json(todo)
+            }else{
+                res.status(400).send("Completed is not boolean")
+            }
+        }else{
+            res.status(404).send("Todo not found")
+        }
+    }catch(error){
+        res.status(500).send("Failed to update todo");
+    }
+    
+})
+
 //  server start
 app.listen(3000, ()=>{
     console.log("server running at http://localhost:3000")
