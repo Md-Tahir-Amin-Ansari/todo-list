@@ -87,6 +87,10 @@ async function displayTodos(){
             const result = await deleteTodo(todo.id)
             if(result){
                 li.remove();
+                if(todoListElement.children.length === 0){
+                    todoListElement.innerHTML = '<li>No tasks found</li>'
+                    return;
+                }
             }else{
                 console.log("Failed to delete todo")
             }
