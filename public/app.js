@@ -23,9 +23,8 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert(result.message);
-                    idInput.value = '';
                     nameInput.value = '';
+                    displayTodos();
                 } else {
                     alert('Server error: ' + result.message);
                 }
@@ -35,3 +34,42 @@
                 alert('Could not connect to the server. Check if your Node app is running on port 3000.');
             }
         });
+
+
+async function LoadTodos() {
+    try{
+        const response = await fetch('http://localhost:3000/todos');
+
+        if(!response.ok){
+            throw new Error('HTTP error! Status: ${response.status}')
+        }
+        const todoList = await response.json();
+        return todoList
+
+    }
+    catch(error){
+        console.error('Failed to load todos: ' , error);
+    }
+}
+
+async function displayTodos(){
+    const todos = await LoadTodos();
+    const todoListElement = document.getElementById('todo-list');
+    todoListElement.innerHTML = '';
+    if (todos.length === 0) {
+        todoListElement.innerHTML = '<li>No tasks found</li>'
+        return;
+    }
+    todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.textContent = todo.name;
+        if(todo.completed){
+            li.classList.add('completed');
+        }
+        todoListElement.appendChild(li)
+    })
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+    displayTodos();
+})
