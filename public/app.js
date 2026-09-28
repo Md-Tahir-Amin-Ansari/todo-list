@@ -1,9 +1,9 @@
  document.getElementById('submit-btn').addEventListener('click', async () => {
-            const idInput = document.getElementById('todo-id');
+
             const nameInput = document.getElementById('todo-name');
             // validation
             if (!nameInput.value.trim()) {
-                alert('Please fill out both ID and Task Name.');
+                alert('Please fill out Task Name.');
                 return;
             }
             // create a todo object
@@ -41,7 +41,7 @@ async function LoadTodos() {
         const response = await fetch('http://localhost:3000/todos');
 
         if(!response.ok){
-            throw new Error('HTTP error! Status: ${response.status}')
+            throw new Error(`HTTP error! Status: ${response.status}`)
         }
         const todoList = await response.json();
         return todoList
@@ -62,12 +62,51 @@ async function displayTodos(){
     }
     todos.forEach(todo => {
         const li = document.createElement('li');
-        li.textContent = todo.name;
+        const checkbox = document.createElement('input');
+        const textSpan = document.createElement('span');
+        checkbox.type ='checkbox'
+        checkbox.checked = todo.completed
+        textSpan.textContent = todo.name;
         if(todo.completed){
             li.classList.add('completed');
+            textSpan.style.textDecoration = 'line-through';
         }
+        checkbox.addEventListener('change', async () => {
+            const result = await toggleTodoStatus(todo.id, checkbox.checked);
+            // Toggle strike-through text instantly on the UI
+            if(result){
+                textSpan.style.textDecoration = checkbox.checked ? 'line-through' : 'none';
+            }else{
+                checkbox.checked = !checkbox.checked
+            }
+            
+        });
+        li.appendChild(checkbox);
+        li.appendChild(textSpan)
         todoListElement.appendChild(li)
     })
+}
+
+async function toggleTodoStatus(id, isCompleted){
+    try{
+        const response = await fetch(`http://localhost:3000/todos/${id}`,{
+            method: 'PATCH',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ completed: isCompleted })
+        })
+        if(response.ok){
+            console.log("Task updated sucessfully")
+            return true;
+        }else{
+            console.log("server error: ", await response.text())
+            return false;
+        }
+    }catch(error){
+        console.log("todo status was not updated: ", error)
+        return false;
+    }
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
