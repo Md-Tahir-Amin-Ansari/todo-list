@@ -52,9 +52,11 @@ app.get('/todos/:id',(req: Request, res: Response)=> {
 // post request
 app.post('/todos',(req:Request,res:Response)=>{
     try{
+        
         if(typeof req.body.name === 'string' && req.body.name.trim()){
+        const largestId = todoList.reduce((max, item) => ( item.id > max ? item.id : max),0)
             const newTask  = {
-            id : todoList.length+1,
+            id : largestId+1,
             name: req.body.name,
             completed: false
         };
