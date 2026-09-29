@@ -11,25 +11,6 @@ type Todo = {
     completed : boolean
 }
 
-
-const todoList : Todo[] = [
-    {
-        id:1,
-        name:"Morning Grindset",
-        completed: true
-    },
-    {
-        id:2,
-        name : "Share 5 patrick bateman quotes (which he never actually said)",
-        completed : false
-    },
-    {
-        id:3,
-        name : "say woman ☕ to some random woman to assert dominance (then wonder why woman avoids you)",
-        completed: false
-    }
-]
-
 //routes
 // get request handler at default home route
 app.get('/', (req: Request, res: Response) => {
