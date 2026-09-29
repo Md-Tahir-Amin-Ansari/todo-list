@@ -1,4 +1,5 @@
 import express, { type Express, type Request, type Response } from 'express';
+import { db } from './database.ts';
 import cors from 'cors';
 // creates express application
 const app: Express = express();
@@ -36,11 +37,12 @@ app.get('/', (req: Request, res: Response) => {
 });
 // get request handler at todos route
 app.get('/todos',(req: Request, res: Response)=> {
-    res.json(todoList)
+    const result = db.prepare(`SELECT * FROM todos`).all()
+    res.json(result)
 })
 // get request handler at todos route with an id
 app.get('/todos/:id',(req: Request, res: Response)=> {
-    const result = todoList.find(todo => todo.id === Number(req.params.id));
+    const result = db.prepare(`SELECT * FROM todos WHERE id = ?`).get(Number(req.params.id))
     if(result){
         res.json(result)
     }else{
@@ -54,14 +56,11 @@ app.post('/todos',(req:Request,res:Response)=>{
     try{
         
         if(typeof req.body.name === 'string' && req.body.name.trim()){
-        const largestId = todoList.reduce((max, item) => ( item.id > max ? item.id : max),0)
-            const newTask  = {
-            id : largestId+1,
-            name: req.body.name,
-            completed: false
-        };
-        todoList.push(newTask)
-        res.status(201).json(newTask);}
+        const statement = db.prepare(`INSERT INTO todos (name) VALUES (?)`)
+        const result = statement.run(req.body.name.trim())
+        const responseStatement = db.prepare(`SELECT * FROM todos WHERE id = ?`)
+        const resultRow = responseStatement.get(result.lastInsertRowid)
+        res.status(201).json(resultRow);}
         else{
             res.status(400).send("Empty Name")
         }
@@ -76,17 +75,19 @@ app.post('/todos',(req:Request,res:Response)=>{
 
 app.patch('/todos/:id',(req:Request,res:Response)=>{
     try{
-        const todo = todoList.find(todo => todo.id === Number(req.params.id));
-        if(todo){
-            if ( typeof req.body.completed === "boolean"){
-                todo.completed = req.body.completed
-                res.status(200).json(todo)
-            }else{
-                res.status(400).send("Completed is not boolean")
-            }
+        if  ( typeof req.body.completed === "boolean"){
+        const result = db.prepare(`UPDATE todos SET completed = ? WHERE id = ?`).run(req.body.completed , Number(req.params.id))
+
+        if(result.changes){
+            const resultRow = db.prepare(`SELECT * FROM todos WHERE id = ?`).get(Number(req.params.id))
+            res.status(200).json(resultRow)
         }else{
             res.status(404).send("Todo not found")
+        }            
+        }else{
+            res.status(400).send("Completed is not boolean")
         }
+
     }catch(error){
         res.status(500).send("Failed to update todo");
     }
@@ -96,12 +97,11 @@ app.patch('/todos/:id',(req:Request,res:Response)=>{
 // Delete route
 app.delete("/todos/:id",(req:Request,res:Response)=>{
     try{
-        const index = todoList.findIndex(item => item.id === Number(req.params.id))
-        if(index === -1){
-            res.status(404).send("Task Not Found")
-        }else{
-            todoList.splice(index,1)
+        const result = db.prepare(`DELETE FROM todos WHERE id = ?`).run(Number(req.params.id))
+        if(result.changes){
             res.status(200).send("Task Deleted Sucessfully")
+        }else{
+            res.status(404).send("Task Not Found")
         }
     }catch(error){
         res.status(500).send("Failed to delete tasks")
