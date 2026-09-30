@@ -1,15 +1,11 @@
 import express, { type Express, type Request, type Response } from 'express';
-import { db } from './database.ts';
+import { getAllTodos, getTodo } from './todoRepository.ts';
 import cors from 'cors';
 // creates express application
 const app: Express = express();
 app.use(cors());
 app.use(express.json()); 
-type Todo = {
-    id : number,
-    name : string,
-    completed : boolean
-}
+
 
 //routes
 // get request handler at default home route
@@ -18,12 +14,12 @@ app.get('/', (req: Request, res: Response) => {
 });
 // get request handler at todos route
 app.get('/todos',(req: Request, res: Response)=> {
-    const result = db.prepare(`SELECT * FROM todos`).all()
+    const result = getAllTodos()
     res.json(result)
 })
 // get request handler at todos route with an id
 app.get('/todos/:id',(req: Request, res: Response)=> {
-    const result = db.prepare(`SELECT * FROM todos WHERE id = ?`).get(Number(req.params.id))
+    const result = getTodo(Number(req.params.id))
     if(result){
         res.json(result)
     }else{
