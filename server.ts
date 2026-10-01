@@ -1,5 +1,5 @@
 import express, { type Express, type Request, type Response } from 'express';
-import { getAllTodos, getTodo } from './todoRepository.ts';
+import { deleteTodo, getAllTodos, getTodo, patchTodo, postTodo } from './todoRepository.ts';
 import cors from 'cors';
 // creates express application
 const app: Express = express();
@@ -33,10 +33,7 @@ app.post('/todos',(req:Request,res:Response)=>{
     try{
         
         if(typeof req.body.name === 'string' && req.body.name.trim()){
-        const statement = db.prepare(`INSERT INTO todos (name) VALUES (?)`)
-        const result = statement.run(req.body.name.trim())
-        const responseStatement = db.prepare(`SELECT * FROM todos WHERE id = ?`)
-        const resultRow = responseStatement.get(result.lastInsertRowid)
+        const resultRow = postTodo(req.body.name)
         res.status(201).json(resultRow);}
         else{
             res.status(400).send("Empty Name")
@@ -53,10 +50,10 @@ app.post('/todos',(req:Request,res:Response)=>{
 app.patch('/todos/:id',(req:Request,res:Response)=>{
     try{
         if  ( typeof req.body.completed === "boolean"){
-        const result = db.prepare(`UPDATE todos SET completed = ? WHERE id = ?`).run(req.body.completed , Number(req.params.id))
+        const result = patchTodo(Number(req.params.id),req.body.completed )
 
-        if(result.changes){
-            const resultRow = db.prepare(`SELECT * FROM todos WHERE id = ?`).get(Number(req.params.id))
+        if(result){
+            const resultRow =getTodo(Number(req.params.id))
             res.status(200).json(resultRow)
         }else{
             res.status(404).send("Todo not found")
@@ -74,8 +71,8 @@ app.patch('/todos/:id',(req:Request,res:Response)=>{
 // Delete route
 app.delete("/todos/:id",(req:Request,res:Response)=>{
     try{
-        const result = db.prepare(`DELETE FROM todos WHERE id = ?`).run(Number(req.params.id))
-        if(result.changes){
+        const result = deleteTodo(Number(req.params.id))
+        if(result){
             res.status(200).send("Task Deleted Sucessfully")
         }else{
             res.status(404).send("Task Not Found")
