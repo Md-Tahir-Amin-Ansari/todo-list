@@ -1,6 +1,8 @@
 import express, { type Express, type Request, type Response } from 'express';
 import { deleteTodo, getAllTodos, getTodo, patchTodo, postTodo } from './todoRepository.ts';
 import cors from 'cors';
+import { createUser , DuplicateUserError, findUserByName } from './userRepository.ts';
+import argon2 from 'argon2';
 // creates express application
 const app: Express = express();
 app.use(cors());
@@ -9,6 +11,7 @@ app.use(express.json());
 const notFoundError = {"error":"Not Found"}
 const invalidInputError = {"error":"Invalid input"}
 const internalServerError = {"error" : "Something went wrong"}
+
 //routes
 // get request handler at default home route
 app.get('/', (req: Request, res: Response) => {
@@ -97,6 +100,29 @@ app.delete("/todos/:id",(req:Request,res:Response)=>{
         
     }catch(error){
         res.status(500).json(internalServerError)
+    }
+})
+
+// registartion route
+app.post('/auth/register',async (req:Request,res:Response)=>{
+    try {
+        const name = req.body.name
+        const password = req.body.password
+        if(typeof name !== 'string' || typeof password !== 'string' || (name.trim() ==='' || password.length <8)){
+            res.status(400).json(invalidInputError)
+        }else{
+            const passwordHash = await argon2.hash(password, {
+            type: argon2.argon2id
+            });
+            const result= createUser(name,passwordHash)
+            res.status(201).json(result)
+        }
+
+    } catch (error) {
+        if (error instanceof DuplicateUserError) {
+        return res.status(409).json({ "error": error.message }); 
+    }
+    res.status(500).json(internalServerError);
     }
 })
 
