@@ -11,11 +11,15 @@ type UserDB = {
 }
 
 export function createUser(name:string, passwordHash: string): User {
+    if(findUserByName(name)){
+        throw new DuplicateUserError
+    } else{
     const statement = db.prepare(`INSERT INTO users (name,password_hash) VALUES (?,?)`)
     const result = statement.run(name, passwordHash)
     const responseStatement = db.prepare(`SELECT id, name FROM users WHERE id = ?`)
     const user = responseStatement.get(result.lastInsertRowid) as User
-    return user
+    return user        
+    }
 }
 
 export function findUserByName(name:string): UserDB | undefined {
@@ -25,5 +29,11 @@ export function findUserByName(name:string): UserDB | undefined {
         return user
     }else{
         return undefined
+    }
+}
+
+export class DuplicateUserError  extends Error {
+    constructor(message = "A user with this name already exist.") {
+        super(message)
     }
 }
