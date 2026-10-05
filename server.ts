@@ -19,12 +19,18 @@ app.get('/todos',(req: Request, res: Response)=> {
 })
 // get request handler at todos route with an id
 app.get('/todos/:id',(req: Request, res: Response)=> {
-    const result = getTodo(Number(req.params.id))
-    if(result){
-        res.json(result)
-    }else{
-        res.status(404).send("No such task")
+    const id = Number(req.params.id)
+    if(Number.isInteger(id) && id>0){
+            const result = getTodo(id)
+            if(result){
+                res.json(result)
+            }else{
+                res.status(404).send("No such task")
+            }
+    } else{
+        res.status(400).send("Invalid Input")
     }
+
     
 })
 
@@ -49,17 +55,19 @@ app.post('/todos',(req:Request,res:Response)=>{
 
 app.patch('/todos/:id',(req:Request,res:Response)=>{
     try{
-        if  ( typeof req.body.completed === "boolean"){
-        const result = patchTodo(Number(req.params.id),req.body.completed )
+        const completed = req.body.completed
+        const id = Number(req.params.id)
+        if  ( typeof completed === "boolean" && Number.isInteger(id) && id>0){
+        const result = patchTodo(id,completed )
 
         if(result){
-            const resultRow =getTodo(Number(req.params.id))
+            const resultRow =getTodo(id)
             res.status(200).json(resultRow)
         }else{
             res.status(404).send("Todo not found")
         }            
         }else{
-            res.status(400).send("Completed is not boolean")
+            res.status(400).send("Input not valid")
         }
 
     }catch(error){
@@ -71,12 +79,18 @@ app.patch('/todos/:id',(req:Request,res:Response)=>{
 // Delete route
 app.delete("/todos/:id",(req:Request,res:Response)=>{
     try{
-        const result = deleteTodo(Number(req.params.id))
-        if(result){
-            res.status(200).send("Task Deleted Sucessfully")
+        const id = Number(req.params.id)
+        if(Number.isInteger(id) && id>0){
+            const result = deleteTodo(id)
+            if(result){
+                res.status(200).send("Task Deleted Sucessfully")
+            }else{
+                res.status(404).send("Task Not Found")
+            }
         }else{
-            res.status(404).send("Task Not Found")
+            res.status(400).send("Invalid Input")
         }
+        
     }catch(error){
         res.status(500).send("Failed to delete tasks")
     }
