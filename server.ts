@@ -6,7 +6,9 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json()); 
 
-
+const notFoundError = {"error":"Not Found"}
+const invalidInputError = {"error":"Invalid input"}
+const internalServerError = {"error" : "Something went wrong"}
 //routes
 // get request handler at default home route
 app.get('/', (req: Request, res: Response) => {
@@ -20,15 +22,17 @@ app.get('/todos',(req: Request, res: Response)=> {
 // get request handler at todos route with an id
 app.get('/todos/:id',(req: Request, res: Response)=> {
     const id = Number(req.params.id)
+
+
     if(Number.isInteger(id) && id>0){
             const result = getTodo(id)
             if(result){
                 res.json(result)
             }else{
-                res.status(404).send("No such task")
+                res.status(404).json(notFoundError)
             }
     } else{
-        res.status(400).send("Invalid Input")
+        res.status(400).json(invalidInputError)
     }
 
     
@@ -42,12 +46,12 @@ app.post('/todos',(req:Request,res:Response)=>{
         const resultRow = postTodo(req.body.name)
         res.status(201).json(resultRow);}
         else{
-            res.status(400).send("Empty Name")
+            res.status(400).json(invalidInputError)
         }
         }
         
     catch(error){
-        res.status(500).send("Failed to create todo");
+        res.status(500).json(internalServerError);
     }
 })
 
@@ -64,14 +68,14 @@ app.patch('/todos/:id',(req:Request,res:Response)=>{
             const resultRow =getTodo(id)
             res.status(200).json(resultRow)
         }else{
-            res.status(404).send("Todo not found")
+            res.status(404).json(notFoundError)
         }            
         }else{
-            res.status(400).send("Input not valid")
+            res.status(400).json(invalidInputError)
         }
 
     }catch(error){
-        res.status(500).send("Failed to update todo");
+        res.status(500).json(internalServerError);
     }
     
 })
@@ -85,14 +89,14 @@ app.delete("/todos/:id",(req:Request,res:Response)=>{
             if(result){
                 res.status(200).send("Task Deleted Sucessfully")
             }else{
-                res.status(404).send("Task Not Found")
+                res.status(404).json(notFoundError)
             }
         }else{
-            res.status(400).send("Invalid Input")
+            res.status(400).json(invalidInputError)
         }
         
     }catch(error){
-        res.status(500).send("Failed to delete tasks")
+        res.status(500).json(internalServerError)
     }
 })
 
