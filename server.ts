@@ -11,6 +11,7 @@ app.use(express.json());
 const notFoundError = {"error":"Not Found"}
 const invalidInputError = {"error":"Invalid input"}
 const internalServerError = {"error" : "Something went wrong"}
+const invalidCredential = {"error" : "Username or Password is incorrect"}
 
 //routes
 // get request handler at default home route
@@ -123,6 +124,39 @@ app.post('/auth/register',async (req:Request,res:Response)=>{
         return res.status(409).json({ "error": error.message }); 
     }
     res.status(500).json(internalServerError);
+    }
+})
+
+// login route
+app.post('/auth/login', async (req: Request , res : Response)=>{
+    try {
+        const name = req.body.name
+        const password = req.body.password        
+        if(typeof name !== 'string' || typeof password !== 'string' || (name.trim() ==='' || password.length <8)){
+            res.status(400).json(invalidInputError)
+        }else{
+            const user = findUserByName(name)
+            if (!user){
+                res.status(401).json(invalidCredential)
+            }else{
+            const password_hash = user.password_hash
+            const isPasswordValid = await argon2.verify(password_hash,password)
+            if(isPasswordValid){
+                res.status(200).json({
+                    id: user.id,
+                    name: user.name
+                })
+
+            }else{
+                res.status(401).json(invalidCredential)
+            }
+            }
+        }        
+    } catch (error) {
+        if (error instanceof DuplicateUserError) {
+        return res.status(409).json({ "error": error.message }); 
+    }        
+        res.status(500).json(internalServerError);
     }
 })
 
