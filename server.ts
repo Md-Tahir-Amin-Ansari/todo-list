@@ -2,6 +2,7 @@ import express, { type Express, type Request, type Response } from 'express';
 import { deleteTodo, getAllTodos, getTodo, patchTodo, postTodo } from './todoRepository.ts';
 import cors from 'cors';
 import { createUser , DuplicateUserError, findUserByName } from './userRepository.ts';
+import { createSession } from './sessionRepository.ts';
 import argon2 from 'argon2';
 // creates express application
 const app: Express = express();
@@ -142,9 +143,11 @@ app.post('/auth/login', async (req: Request , res : Response)=>{
             const password_hash = user.password_hash
             const isPasswordValid = await argon2.verify(password_hash,password)
             if(isPasswordValid){
+                const sessionID = createSession(user.id)
                 res.status(200).json({
                     id: user.id,
-                    name: user.name
+                    name: user.name,
+                    sessionID : sessionID
                 })
 
             }else{

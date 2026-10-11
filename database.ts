@@ -18,3 +18,13 @@ db.exec(`
     password_hash TEXT NOT NULL
     )
   `)
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS sessions (
+    id TEXT PRIMARY KEY DEFAULT (hex(randomblob(16))),
+    user_id INTEGER NOT NULL,
+    expires_at INTEGER DEFAULT unixepoch('now', '+1 hour')
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+  `)
