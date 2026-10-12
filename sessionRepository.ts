@@ -1,12 +1,22 @@
 import { db } from './database.ts';
 
-export function createSession(user_id: number): [string,number] | undefined{
+export function createSession(user_id: number): [string, number] | undefined {
     // insert into session table and return its session id
     const statement = db.prepare(`INSERT INTO sessions (user_id) VALUES (?) RETURNING id,expires_at`)
     const result = statement.get(user_id) as { id: string; expire_at: number } | undefined;
-    if(result && typeof result.id ==='string'){
-        return [result.id , result.expire_at]     
-    }else{
+    if (result && typeof result.id === 'string') {
+        return [result.id, result.expire_at]
+    } else {
+        return undefined
+    }
+}
+
+export function validateSession(sessionID: string) {
+    const statement = db.prepare(`SELECT user_id FROM sessions WHERE id = ? AND expires_at > unixepoch('now')`)
+    const user = statement.get(sessionID) as { user_id: number } | undefined;
+    if (user) {
+        return user.user_id
+    } else {
         return undefined
     }
 }
