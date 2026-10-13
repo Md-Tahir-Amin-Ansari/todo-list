@@ -2,7 +2,7 @@ import express, { type Express, type Request, type Response } from 'express';
 import { deleteTodo, getAllTodos, getTodo, patchTodo, postTodo } from './todoRepository.ts';
 import cors from 'cors';
 import { createUser, DuplicateUserError, findUserByName } from './userRepository.ts';
-import { createSession } from './sessionRepository.ts';
+import { createSession, logout } from './sessionRepository.ts';
 import argon2 from 'argon2';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middleware.ts';
@@ -176,6 +176,26 @@ app.post('/auth/login', async (req: Request, res: Response) => {
             }
         }
     } catch (error) {
+        res.status(500).json(internalServerError);
+    }
+})
+
+// logout route
+app.post('/auth/logout',authenticate, (req:Request,res:Response) =>{
+    try{
+        const sessionID = req.cookies.sessionID
+        const result = logout(sessionID)
+            res.clearCookie("sessionID",{
+                path: "/",
+                httpOnly: true,
+                sameSite: "lax"
+            })
+        if(result){
+            return res.status(200).json({ message: "Logout successful" })
+        } else{
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+    }catch(error){
         res.status(500).json(internalServerError);
     }
 })

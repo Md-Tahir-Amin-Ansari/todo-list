@@ -24,6 +24,7 @@ db.exec(`
     id TEXT PRIMARY KEY DEFAULT (hex(randomblob(16))),
     user_id INTEGER NOT NULL,
     expires_at INTEGER NOT NULL,
+    revoked_at INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
