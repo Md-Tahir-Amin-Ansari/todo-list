@@ -48,3 +48,8 @@ DELETE    /todos/:id     Delete a Todo
 ## Future Improvements
 
 auth
+
+## How to chjeckfor ts errors
+```
+npx -p typescript tsc middleware.ts --noEmit --strict
+```

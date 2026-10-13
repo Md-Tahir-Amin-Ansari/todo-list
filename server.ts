@@ -5,6 +5,7 @@ import { createUser, DuplicateUserError, findUserByName } from './userRepository
 import { createSession } from './sessionRepository.ts';
 import argon2 from 'argon2';
 import cookieParser from 'cookie-parser';
+import { authenticate } from './middleware.ts';
 // creates express application
 const app: Express = express();
 app.use(cors());
@@ -18,16 +19,16 @@ const invalidCredential = { "error": "Username or Password is incorrect" }
 
 //routes
 // get request handler at default home route
-app.get('/', (req: Request, res: Response) => {
+app.get('/', authenticate, (req: Request, res: Response) => {
     res.send('Hello World!');
 });
 // get request handler at todos route
-app.get('/todos', (req: Request, res: Response) => {
+app.get('/todos',authenticate, (req: Request, res: Response) => {
     const result = getAllTodos()
     res.json(result)
 })
 // get request handler at todos route with an id
-app.get('/todos/:id', (req: Request, res: Response) => {
+app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
     const id = Number(req.params.id)
 
 
@@ -46,7 +47,7 @@ app.get('/todos/:id', (req: Request, res: Response) => {
 })
 
 // post request
-app.post('/todos', (req: Request, res: Response) => {
+app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
 
         if (typeof req.body.name === 'string' && req.body.name.trim()) {
@@ -65,7 +66,7 @@ app.post('/todos', (req: Request, res: Response) => {
 
 // patch route
 
-app.patch('/todos/:id', (req: Request, res: Response) => {
+app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
     try {
         const completed = req.body.completed
         const id = Number(req.params.id)
@@ -89,7 +90,7 @@ app.patch('/todos/:id', (req: Request, res: Response) => {
 })
 
 // Delete route
-app.delete("/todos/:id", (req: Request, res: Response) => {
+app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         if (Number.isInteger(id) && id > 0) {
