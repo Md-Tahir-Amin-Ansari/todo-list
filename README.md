@@ -5,6 +5,8 @@ Todo App is a light web app for making todo list. It exist to leanr full stack w
 ## Features
 - 5 CRUD endpoints
 - frontend to enter and update todos
+- authentication and autherization
+- hashed password via argonian 🦎 (argon2)
 
 ## Tech Stack
 - HTML5
@@ -17,11 +19,15 @@ Todo App is a light web app for making todo list. It exist to leanr full stack w
 
 ## Project Structure
 public/
+docs/
 app.js < Frontend js>
 index.html < Frontend html>
 style.css < style >
 server.ts
-todoRepostory.ts <all the db function>
+todoRepostory.ts <all the todos db function>
+sessionRepository <all the session db function>
+userRepostory <all the user db function>
+middleware.ts <middlerwares>
 
 ## Running Locally
 
@@ -47,7 +53,8 @@ DELETE    /todos/:id     Delete a Todo
 
 ## Future Improvements
 
-auth
+- Full React frontend
+- Automated Test
 
 ## How to chjeckfor ts errors
 ```
