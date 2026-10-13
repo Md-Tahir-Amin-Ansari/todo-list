@@ -6,8 +6,10 @@ export const db = new DatabaseSync('todos.db');
 db.exec(`
     CREATE TABLE IF NOT EXISTS todos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
-    completed INTEGER DEFAULT 0
+    completed INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id)
   )
     `)
 

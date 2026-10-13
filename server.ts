@@ -24,7 +24,7 @@ app.get('/', authenticate, (req: Request, res: Response) => {
 });
 // get request handler at todos route
 app.get('/todos',authenticate, (req: Request, res: Response) => {
-    const result = getAllTodos()
+    const result = getAllTodos(req.body.user_id)
     res.json(result)
 })
 // get request handler at todos route with an id
@@ -33,7 +33,7 @@ app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
 
 
     if (Number.isInteger(id) && id > 0) {
-        const result = getTodo(id)
+        const result = getTodo(id,req.body.user_id)
         if (result) {
             res.json(result)
         } else {
@@ -51,7 +51,7 @@ app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
 
         if (typeof req.body.name === 'string' && req.body.name.trim()) {
-            const resultRow = postTodo(req.body.name)
+            const resultRow = postTodo(req.body.name,req.body.user_id)
             res.status(201).json(resultRow);
         }
         else {
@@ -71,10 +71,10 @@ app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
         const completed = req.body.completed
         const id = Number(req.params.id)
         if (typeof completed === "boolean" && Number.isInteger(id) && id > 0) {
-            const result = patchTodo(id, completed)
+            const result = patchTodo(id,req.body.user_id, completed)
 
             if (result) {
-                const resultRow = getTodo(id)
+                const resultRow = getTodo(id,req.body.user_id)
                 res.status(200).json(resultRow)
             } else {
                 res.status(404).json(notFoundError)
@@ -94,7 +94,7 @@ app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id)
         if (Number.isInteger(id) && id > 0) {
-            const result = deleteTodo(id)
+            const result = deleteTodo(id,req.body.user_id)
             if (result) {
                 res.status(200).send("Task Deleted Sucessfully")
             } else {
