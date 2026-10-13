@@ -16,6 +16,7 @@ const notFoundError = { "error": "Not Found" }
 const invalidInputError = { "error": "Invalid input" }
 const internalServerError = { "error": "Something went wrong" }
 const invalidCredential = { "error": "Username or Password is incorrect" }
+const unauthorized = {"error" : "Unauthorized"}
 
 //routes
 // get request handler at default home route
@@ -24,23 +25,41 @@ app.get('/', authenticate, (req: Request, res: Response) => {
 });
 // get request handler at todos route
 app.get('/todos',authenticate, (req: Request, res: Response) => {
-    const result = getAllTodos(req.body.user_id)
-    res.json(result)
+   try {
+    if(req.user_id){
+    const result = getAllTodos(req.user_id)
+    res.json(result)        
+    }else{
+        return res.status(401).json(unauthorized)
+    }
+    }catch(error){
+        res.status(500).json(internalServerError)
+    }
+
 })
 // get request handler at todos route with an id
 app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
+    try{
     const id = Number(req.params.id)
 
-
     if (Number.isInteger(id) && id > 0) {
-        const result = getTodo(id,req.body.user_id)
+        if(req.user_id){
+        const result = getTodo(id,req.user_id)
         if (result) {
             res.json(result)
         } else {
             res.status(404).json(notFoundError)
         }
+        }else{
+            return res.status(401).json(unauthorized)
+        }
+        
     } else {
         res.status(400).json(invalidInputError)
+    }
+
+    }catch(error){
+        res.status(500).json(internalServerError)
     }
 
 
@@ -51,8 +70,13 @@ app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
 
         if (typeof req.body.name === 'string' && req.body.name.trim()) {
-            const resultRow = postTodo(req.body.name,req.body.user_id)
-            res.status(201).json(resultRow);
+            if(req.user_id){
+                const resultRow = postTodo(req.body.name,req.user_id)
+                res.status(201).json(resultRow);
+            }else{
+                return res.status(401).json(unauthorized)
+            }
+
         }
         else {
             res.status(400).json(invalidInputError)
@@ -71,14 +95,19 @@ app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
         const completed = req.body.completed
         const id = Number(req.params.id)
         if (typeof completed === "boolean" && Number.isInteger(id) && id > 0) {
-            const result = patchTodo(id,req.body.user_id, completed)
+            if(req.user_id){
+            const result = patchTodo(id,req.user_id, completed)
 
             if (result) {
-                const resultRow = getTodo(id,req.body.user_id)
+                const resultRow = getTodo(id,req.user_id)
                 res.status(200).json(resultRow)
             } else {
                 res.status(404).json(notFoundError)
+            }                
+            }else{
+                res.status(401).json(unauthorized)
             }
+
         } else {
             res.status(400).json(invalidInputError)
         }
@@ -92,17 +121,22 @@ app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
 // Delete route
 app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
     try {
-        const id = Number(req.params.id)
-        if (Number.isInteger(id) && id > 0) {
-            const result = deleteTodo(id,req.body.user_id)
-            if (result) {
-                res.status(200).send("Task Deleted Sucessfully")
+        if(req.user_id){
+            const id = Number(req.params.id)
+            if (Number.isInteger(id) && id > 0) {
+                const result = deleteTodo(id,req.user_id)
+                if (result) {
+                    res.status(200).send("Task Deleted Sucessfully")
+                } else {
+                    res.status(404).json(notFoundError)
+                }
             } else {
-                res.status(404).json(notFoundError)
+                res.status(400).json(invalidInputError)
             }
-        } else {
-            res.status(400).json(invalidInputError)
-        }
+    }else{
+        return res.status(401).json(unauthorized)
+    }
+        
 
     } catch (error) {
         res.status(500).json(internalServerError)
@@ -115,7 +149,7 @@ app.post('/auth/register', async (req: Request, res: Response) => {
         const name = req.body.name
         const password = req.body.password
         if (typeof name !== 'string' || typeof password !== 'string' || (name.trim() === '' || password.length < 8)) {
-            res.status(400).json(invalidInputError)
+            return res.status(400).json(invalidInputError)
         } else {
             const passwordHash = await argon2.hash(password, {
                 type: argon2.argon2id
