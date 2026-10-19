@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import { cva, VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   Button as AriaButton,
   type ButtonProps as AriaButtonProps
@@ -138,8 +138,8 @@ export const buttonStyles = cva(
 
 export interface ButtonProps
   extends
-    Omit<AriaButtonProps, "isDisabled" | "isPending">,
-    VariantProps<typeof buttonStyles> {
+  Omit<AriaButtonProps, "isDisabled" | "isPending">,
+  VariantProps<typeof buttonStyles> {
   disabled?: boolean;
   pending?: boolean;
   readOnly?: boolean;

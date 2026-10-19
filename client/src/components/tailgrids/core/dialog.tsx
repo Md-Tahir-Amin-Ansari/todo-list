@@ -9,8 +9,8 @@ import {
   type DialogProps as AriaDialogProps,
   type HeadingProps
 } from "react-aria-components";
-import { Button, ButtonProps } from "./button";
-import { Description, DescriptionProps } from "./description";
+import { Button,type ButtonProps } from "./button";
+import { Description, type DescriptionProps } from "./description";
 
 export interface DialogProps extends AriaDialogProps {
   isOpen?: boolean;

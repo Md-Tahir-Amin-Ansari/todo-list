@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   Dialog as AriaDialog,
   Modal as AriaModal,
-  DialogRenderProps
+  type DialogRenderProps
 } from "react-aria-components";
-import { Backdrop, BackdropProps } from "./overlay";
+import { Backdrop, type BackdropProps } from "./overlay";
 
 export interface AlertDialogProps extends Omit<
   BackdropProps,

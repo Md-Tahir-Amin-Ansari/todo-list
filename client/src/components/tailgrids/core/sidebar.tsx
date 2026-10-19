@@ -3,7 +3,7 @@
 import { cn } from "@/utils/cn";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { Button, ButtonProps } from "react-aria-components";
+import { Button, type ButtonProps } from "react-aria-components";
 import { Sheet, SheetContent } from "./sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
