@@ -7,10 +7,14 @@ interface TaskModalProps {
     isOpen: boolean,
     onClose: () => void,
     onSave: (title: string) => void,
-    onDelete?: () => void
+    onDelete?: () => void,
+    task?: {
+        id: number,
+        name: string
+    }
 }
 
-export function TaskModal({ isOpen, onClose, onSave, onDelete }: TaskModalProps) {
+export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModalProps) {
     // states
     const [title, setTitle] = useState('');
     const [priority, setPriority] = useState('');
@@ -20,7 +24,7 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete }: TaskModalProps)
         <>
             <Dialog isOpen={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle>{task ? "Edit Task" : "Add Task"}</DialogTitle>
                 </DialogHeader>
                 <DialogBody></DialogBody>
             </Dialog>
