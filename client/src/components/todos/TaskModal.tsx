@@ -25,6 +25,7 @@ export interface Task {
     id: number;
     name: string;
     priority: "high" | "medium" | "low";
+    completed: boolean,
     dueDate?: DateValue | null;
     tag?: string | null;
 }
