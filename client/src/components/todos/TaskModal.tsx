@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components/tailgrids/core/dialog.tsx'
 import { Input } from "@/components/tailgrids/core/input";
 import { Button } from "../tailgrids/core/button";
-import { Label } from "../tailgrids/core/label";
 import { Select, SelectContent, SelectIndicator, SelectItem, SelectTrigger, SelectValue } from "../tailgrids/core/select";
 import { DatePicker, DatePickerGroup, DatePickerPopover, DatePickerTrigger } from "../tailgrids/core/date-picker";
 import { DateInput, DateSegment } from "react-aria-components";
