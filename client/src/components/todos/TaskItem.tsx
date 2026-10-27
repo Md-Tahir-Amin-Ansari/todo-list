@@ -1,6 +1,6 @@
 import { Button } from '../tailgrids/core/button';
 import { Checkbox } from '../tailgrids/core/checkbox';
-import type { Task } from './TaskModal';
+import type { Task } from '@/types';
 
 interface TaskItemProps {
     task: Task,

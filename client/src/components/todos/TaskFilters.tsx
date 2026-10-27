@@ -1,8 +1,6 @@
 import { Button } from "../tailgrids/core/button";
-import { ButtonGroup } from "../tailgrids/core/button-group";
 import { Input } from "../tailgrids/core/input";
-
-export type FilterType = 'all' | 'active' | 'done' | 'high';
+import type { FilterType } from '@/types';
 
 interface TaskFiltersProps {
     searchQuery: string;

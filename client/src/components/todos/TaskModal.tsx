@@ -9,6 +9,7 @@ import type { DateValue } from "react-aria-components";
 import { FieldLabel } from "../tailgrids/core/field";
 import { ButtonGroup } from "@/components/tailgrids/core/button-group";
 import { z } from "zod";
+import type { Task, TaskInput } from '@/types';
 
 const taskSchema = z.object({
     name: z
@@ -19,16 +20,6 @@ const taskSchema = z.object({
     tag: z.string().optional(),
     dueDate: z.any().nullable().optional(),
 });
-export type TaskInput = z.infer<typeof taskSchema>;
-
-export interface Task {
-    id: number;
-    name: string;
-    priority: "high" | "medium" | "low";
-    completed: boolean,
-    dueDate?: DateValue | null;
-    tag?: string | null;
-}
 
 interface TaskModalProps {
     isOpen: boolean;
@@ -52,8 +43,8 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
         if (task) {
             setName(task.name);
             setPriority(task.priority);
-            setDueDate(task.dueDate);
-            setTag(task.tag);
+            setDueDate(task.dueDate ?? null);
+            setTag(task.tag ?? '');
             setErrorMessage(null);
 
         } else {

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { SidebarProvider } from '@/components/tailgrids/core/sidebar';
-import { AppSidebar, type ViewType } from '@/components/layout/Sidebar';
+import { AppSidebar } from '@/components/layout/Sidebar';
+import type { ViewType } from '@/types';
+
 import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';

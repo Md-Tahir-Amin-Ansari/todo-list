@@ -3,16 +3,13 @@ import { Button } from "../tailgrids/core/button";
 import { Label } from "../tailgrids/core/label";
 import { Input } from "../tailgrids/core/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../tailgrids/core/card";
-import * as z from "zod";
+import { z } from "zod";
 import { TextField } from "../tailgrids/core/text-field";
 import { Link } from "../tailgrids/core/link";
-type UserInfo = {
-    name?: string;
-    email: string;
-    password: string;
-}
+import type { AuthCredentials } from '@/types';
+
 interface AuthCardProps {
-    onSubmit: (data: UserInfo) => void;
+    onSubmit: (data: AuthCredentials) => void;
     errorMessage?: string;
     loading?: boolean;
 }

@@ -12,18 +12,14 @@ import {
     Gear1,
     Home
 } from "@tailgrids/icons";
+import type { User, ViewType } from '@/types';
 
 
-export type ViewType = 'today' | 'all' | 'settings';
-export interface UserProfile {
-    name: string;
-    email: string;
-}
 
 interface SidebarProps {
     currentView: ViewType;
     onSelectView: (view: ViewType) => void;
-    user?: UserProfile;
+    user?: User;
 }
 
 const NAV_ITEMS = [
