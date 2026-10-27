@@ -108,13 +108,13 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                 </CardContent>
                 <CardFooter className="flex flex-col gap-3">
                     <div className="min-h-[24px] pt-4 flex items-center justify-center">
-                        {error && (
+                        {(error || errorMessage) && (
                             <p className="text-sm text-error-500 font-medium text-center">
-                                {error}
+                                {(error || errorMessage)}
                             </p>
                         )}
                     </div>
-                    <Button type='submit' variant="primary" className='w-full my-3'>{isSignUp ? "Create account" : "Log in"}</Button>
+                    <Button type='submit' variant="primary" className='w-full my-3' pending={loading}>{isSignUp ? "Create account" : "Log in"}</Button>
                     <div className="flex items-center justify-center gap-1.5  text-text-100">
                         <span>{isSignUp ? "Have an account?" : "New here?"}</span>
                         <Link className="font-bold" variant="primary" type="button" onClick={() => setIsSignUp(!isSignUp)} href={""}>{isSignUp ? "Log in" : "Sign up"}</Link>
