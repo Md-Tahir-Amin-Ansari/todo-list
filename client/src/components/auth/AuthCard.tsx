@@ -5,7 +5,6 @@ import { Input } from "../tailgrids/core/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../tailgrids/core/card";
 import { z } from "zod";
 import { TextField } from "../tailgrids/core/text-field";
-import { Link } from "../tailgrids/core/link";
 import type { AuthCredentials } from '@/types';
 
 interface AuthCardProps {
@@ -118,7 +117,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                     <Button type='submit' variant="primary" className='w-full my-3' pending={loading}>{isSignUp ? "Create account" : "Log in"}</Button>
                     <div className="flex items-center justify-center gap-1.5  text-text-100">
                         <span>{isSignUp ? "Have an account?" : "New here?"}</span>
-                        <Link className="font-bold" variant="primary" type="button" onClick={() => setIsSignUp(!isSignUp)} href={""}>{isSignUp ? "Log in" : "Sign up"}</Link>
+                        <button className="bg-transparent border-none p-0 cursor-pointer font-bold text-primary-500 hover:text-primary-600 hover:underline transition" type="button" onClick={() => setIsSignUp(!isSignUp)}>{isSignUp ? "Log in" : "Sign up"}</button>
                     </div>
                 </CardFooter>
             </form>
