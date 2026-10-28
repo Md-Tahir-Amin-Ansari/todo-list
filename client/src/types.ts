@@ -6,8 +6,8 @@ export interface User {
     email?: string;
 }
 export interface AuthCredentials {
-    name?: string;
-    email: string;
+    name: string;
+    email?: string;
     password: string;
 }
 

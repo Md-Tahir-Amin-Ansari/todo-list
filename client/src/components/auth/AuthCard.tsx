@@ -15,7 +15,7 @@ interface AuthCardProps {
 }
 
 const LoginSchema = z.object({
-    email: z.email("Invalid Email"),
+    name: z.string().min(3, "Name too short"),
     password: z.string()
         .min(8, "Password must be at least 8 characters")
         .regex(/[A-Z]/, "Must contain at least 1 uppercase letter")
@@ -23,7 +23,8 @@ const LoginSchema = z.object({
         .regex(/[^A-Za-z0-9]/, "Must contain at least 1 symbol")
 });
 const SignUpSchema = LoginSchema.extend({
-    name: z.string().min(3, "Name too short")
+    email: z.email("Invalid Email")
+
 })
 
 export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardProps) {
@@ -51,7 +52,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
             }
         } else {
             const result = LoginSchema.safeParse({
-                email,
+                name,
                 password
             });
             if (!result.success) {
@@ -72,7 +73,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
             </CardHeader>
             <form onSubmit={handleSubmit}>
                 <CardContent className="flex flex-col gap-4">
-                    {isSignUp && (<TextField className="w-full">
+                    <TextField className="w-full">
                         <Label htmlFor="name" className="font-bold">Name</Label>
                         <Input
                             id="name"
@@ -82,8 +83,8 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                             className="w-full"
                             onChange={(e) => setName(e.target.value)}
                         />
-                    </TextField>)}
-                    <TextField className="w-full">
+                    </TextField>
+                    {isSignUp && (<TextField className="w-full">
                         <Label htmlFor="email" className="font-bold">Email Address</Label>
                         <Input
                             id="email"
@@ -93,7 +94,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                             className="w-full"
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                    </TextField>
+                    </TextField>)}
                     <TextField className="w-full">
                         <Label htmlFor="password" className="font-bold">Password</Label>
                         <Input
