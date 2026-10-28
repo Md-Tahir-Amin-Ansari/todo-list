@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SidebarProvider } from '@/components/tailgrids/core/sidebar';
 import { AppSidebar } from '@/components/layout/Sidebar';
 import { type User, type ViewType } from '@/types';
@@ -7,13 +7,21 @@ import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
 import { login, register } from '@/api/auth';
-import type { AuthCredentials } from '@/types';
+import type { AuthCredentials, Task } from '@/types';
+import { getTodos } from './api/todos';
+import { EmptyState } from './components/layout/EmptyState';
+
+
+
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('today');
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>();
-
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasksLoading, setTasksLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  // authentication
   const handleAuth = async (credentials: AuthCredentials, isSignUp: boolean) => {
     try {
       setAuthLoading(true);
@@ -29,6 +37,20 @@ export default function App() {
       setAuthLoading(false)
     }
   }
+  useEffect(() => {
+    if (!user) return; // If not logged in, do nothing
+
+    async function loadTasks() {
+      try {
+        const data = await getTodos();
+        setTasks(data);
+      } catch (err) {
+        console.error("Failed to load tasks:", err);
+      }
+    }
+
+    loadTasks();
+  }, [user]);
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-50 p-4">
@@ -57,24 +79,32 @@ export default function App() {
             />
 
             <div className="max-w-3xl">
-              <TaskItem
-                task={{
-                  id: 1,
-                  name: "Design landing page wireframes",
-                  priority: "high",
-                  completed: false,
-                  tag: "Design",
-                  dueDate: null,
-                }}
-                onToggle={(id) => console.log('Toggled task:', id)}
-                onEdit={(task) => console.log('Edit task:', task)}
-              />
+              {tasks.length === 0 ? (
+                <EmptyState
+                  badge="0"
+                  title="No tasks yet"
+                  description="Add your first task and it will show up here."
+                  actionLabel="+ Add task"
+                  onAction={() => setIsModalOpen(true)}
+                />
+              ) : (
+                <div className="space-y-2">
+                  {tasks.map((task) => (
+                    <TaskItem
+                      key={task.id}
+                      task={task}
+                      onToggle={handleToggleTask}
+                      onEdit={handleEditTask}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </main>
       </div>
 
-      <TaskModal isOpen={false} onClose={() => { }} onSave={() => { }} />
+      <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => { }} />
     </SidebarProvider>
   );
 }
