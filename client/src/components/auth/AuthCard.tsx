@@ -9,7 +9,7 @@ import { Link } from "../tailgrids/core/link";
 import type { AuthCredentials } from '@/types';
 
 interface AuthCardProps {
-    onSubmit: (data: AuthCredentials) => void;
+    onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
     errorMessage?: string;
     loading?: boolean;
 }
@@ -48,7 +48,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                 return
             } else {
                 setError('')
-                onSubmit(result.data)
+                onSubmit(result.data, true)
             }
         } else {
             const result = LoginSchema.safeParse({
@@ -60,7 +60,7 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                 return
             } else {
                 setError('')
-                onSubmit(result.data)
+                onSubmit(result.data, false)
             }
         }
     }

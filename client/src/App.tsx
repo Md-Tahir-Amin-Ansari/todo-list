@@ -1,19 +1,49 @@
 import { useState } from 'react';
 import { SidebarProvider } from '@/components/tailgrids/core/sidebar';
 import { AppSidebar } from '@/components/layout/Sidebar';
-import type { ViewType } from '@/types';
-
+import { type User, type ViewType } from '@/types';
+import AuthCard from '@/components/auth/AuthCard';
 import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
-
+import { login, register } from '@/api/auth';
+import type { AuthCredentials } from '@/types';
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('today');
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string | null>();
 
-  return (
+  const handleAuth = async (credentials: AuthCredentials, isSignUp: boolean) => {
+    try {
+      setAuthLoading(true);
+      setAuthError(null);
+      const loggedInUser = isSignUp ? await register(credentials) : await login(credentials);
+      if (!loggedInUser || !loggedInUser.id) {
+        throw new Error("Authentication failed: invalid response received.");
+      }
+      setUser(loggedInUser);
+    } catch (error) {
+      setAuthError(error.message)
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background-50 p-4">
+        <AuthCard
+          onSubmit={handleAuth}
+          errorMessage={authError}
+          loading={authLoading}
+        />
+      </div>
+    );
+  }
+  else return (
     <SidebarProvider defaultOpen>
       <div className="flex min-h-screen w-full bg-background-50">
-        <AppSidebar currentView={currentView} onSelectView={setCurrentView} />
+        <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} />
 
         <main className="flex-1 p-8 space-y-4">
           <div className="max-w-3xl space-y-4">
