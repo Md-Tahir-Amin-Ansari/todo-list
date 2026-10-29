@@ -7,8 +7,8 @@ import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
 import { login, register } from '@/api/auth';
-import type { AuthCredentials, Task } from '@/types';
-import { getTodos } from './api/todos';
+import type { AuthCredentials, Task, TaskInput } from '@/types';
+import { getTodos, createTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
 
 
@@ -51,6 +51,24 @@ export default function App() {
 
     loadTasks();
   }, [user]);
+
+  // handle task create
+  const handleCreateTask = async (payload: TaskInput) => {
+    try {
+      const newTask = await createTodos(payload);
+      setTasks((prev) => [...prev, newTask]);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to create task:", err);
+    }
+  };
+  const handleToggleTask = async (id: number) => {
+    console.log("Toggle task:", id);
+  };
+
+  const handleEditTask = (task: Task) => {
+    console.log("Edit task:", task);
+  };
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-50 p-4">
@@ -104,7 +122,7 @@ export default function App() {
         </main>
       </div>
 
-      <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={() => { }} />
+      <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleCreateTask} />
     </SidebarProvider>
   );
 }

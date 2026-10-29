@@ -14,6 +14,8 @@ const PRIORITY_CONFIG = {
 } as const;
 
 export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
+    const priority = task.priority ?? 'medium';
+    const priorityConfig = PRIORITY_CONFIG[priority] ?? PRIORITY_CONFIG.medium;
     return (
         <>
             <div className="flex items-start gap-3.5 rounded-2xl border border-base-200 bg-white p-4 shadow-xs transition-colors hover:border-base-300">
@@ -34,8 +36,8 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
                     <div className="flex flex-wrap items-center gap-2.5 text-xs text-text-100">
                         {/* Priority Dot */}
                         <div className="flex items-center gap-1.5">
-                            <span className={`size-2 rounded-full ${PRIORITY_CONFIG[task.priority].color}`} />
-                            <span>{PRIORITY_CONFIG[task.priority].label}</span>
+                            <span className={`size-2 rounded-full ${priorityConfig.color}`} />
+                            <span>{priority}</span>
                         </div>
 
                         {/* Due Date (if present) */}

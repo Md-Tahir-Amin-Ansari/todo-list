@@ -59,7 +59,7 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
 
 
     // handle submit and validation
-    const handleSubmit = (e?: React.FormEvent) => {
+    const handleSubmit = (e?: React.SyntheticEvent) => {
         if (e) e.preventDefault();
         const result = taskSchema.safeParse({
             name,
