@@ -8,7 +8,7 @@ import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
 import { login, register } from '@/api/auth';
 import type { AuthCredentials, Task, TaskInput } from '@/types';
-import { getTodos, createTodos } from './api/todos';
+import { getTodos, createTodos, updateTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
 
 
@@ -63,7 +63,18 @@ export default function App() {
     }
   };
   const handleToggleTask = async (id: number) => {
-    console.log("Toggle task:", id);
+    const target = tasks.find((task) => task.id === id);
+    if (!target) return;
+    const newCompleted = !target.completed;
+    try {
+      await updateTodos(id, { completed: newCompleted });
+      setTasks((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+      );
+    } catch (error) {
+      console.error("Failed to toggle task:", error);
+    }
+
   };
 
   const handleEditTask = (task: Task) => {
