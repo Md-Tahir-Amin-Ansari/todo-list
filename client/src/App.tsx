@@ -6,7 +6,7 @@ import AuthCard from '@/components/auth/AuthCard';
 import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
-import { login, register } from '@/api/auth';
+import { getMe, login, register } from '@/api/auth';
 import type { AuthCredentials, Task, TaskInput } from '@/types';
 import { getTodos, createTodos, updateTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
@@ -51,7 +51,17 @@ export default function App() {
 
     loadTasks();
   }, [user]);
-
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const currentUser = await getMe();
+        setUser(currentUser);
+      } catch {
+        setUser(null);
+      }
+    }
+    checkSession();
+  }, []);
   // handle task create
   const handleCreateTask = async (payload: TaskInput) => {
     try {

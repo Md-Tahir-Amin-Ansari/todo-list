@@ -1,7 +1,7 @@
 import express, { type Express, type Request, type Response } from 'express';
 import { deleteTodo, getAllTodos, getTodo, patchTodo, postTodo } from './todoRepository.ts';
 import cors from 'cors';
-import { createUser, DuplicateUserError, findUserByName } from './userRepository.ts';
+import { createUser, DuplicateUserError, findUserById, findUserByName } from './userRepository.ts';
 import { createSession, logout } from './sessionRepository.ts';
 import argon2 from 'argon2';
 import cookieParser from 'cookie-parser';
@@ -16,7 +16,7 @@ const notFoundError = { "error": "Not Found" }
 const invalidInputError = { "error": "Invalid input" }
 const internalServerError = { "error": "Something went wrong" }
 const invalidCredential = { "error": "Username or Password is incorrect" }
-const unauthorized = {"error" : "Unauthorized"}
+const unauthorized = { "error": "Unauthorized" }
 
 //routes
 // get request handler at default home route
@@ -24,41 +24,41 @@ app.get('/', authenticate, (req: Request, res: Response) => {
     res.send('Hello World!');
 });
 // get request handler at todos route
-app.get('/todos',authenticate, (req: Request, res: Response) => {
-   try {
-    if(req.user_id){
-    const result = getAllTodos(req.user_id)
-    res.json(result)        
-    }else{
-        return res.status(401).json(unauthorized)
-    }
-    }catch(error){
+app.get('/todos', authenticate, (req: Request, res: Response) => {
+    try {
+        if (req.user_id) {
+            const result = getAllTodos(req.user_id)
+            res.json(result)
+        } else {
+            return res.status(401).json(unauthorized)
+        }
+    } catch (error) {
         res.status(500).json(internalServerError)
     }
 
 })
 // get request handler at todos route with an id
 app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
-    try{
-    const id = Number(req.params.id)
+    try {
+        const id = Number(req.params.id)
 
-    if (Number.isInteger(id) && id > 0) {
-        if(req.user_id){
-        const result = getTodo(id,req.user_id)
-        if (result) {
-            res.json(result)
+        if (Number.isInteger(id) && id > 0) {
+            if (req.user_id) {
+                const result = getTodo(id, req.user_id)
+                if (result) {
+                    res.json(result)
+                } else {
+                    res.status(404).json(notFoundError)
+                }
+            } else {
+                return res.status(401).json(unauthorized)
+            }
+
         } else {
-            res.status(404).json(notFoundError)
+            res.status(400).json(invalidInputError)
         }
-        }else{
-            return res.status(401).json(unauthorized)
-        }
-        
-    } else {
-        res.status(400).json(invalidInputError)
-    }
 
-    }catch(error){
+    } catch (error) {
         res.status(500).json(internalServerError)
     }
 
@@ -70,10 +70,10 @@ app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
 
         if (typeof req.body.name === 'string' && req.body.name.trim()) {
-            if(req.user_id){
-                const resultRow = postTodo(req.body.name,req.user_id)
+            if (req.user_id) {
+                const resultRow = postTodo(req.body.name, req.user_id)
                 res.status(201).json(resultRow);
-            }else{
+            } else {
                 return res.status(401).json(unauthorized)
             }
 
@@ -95,16 +95,16 @@ app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
         const completed = req.body.completed
         const id = Number(req.params.id)
         if (typeof completed === "boolean" && Number.isInteger(id) && id > 0) {
-            if(req.user_id){
-            const result = patchTodo(id,req.user_id, completed)
+            if (req.user_id) {
+                const result = patchTodo(id, req.user_id, completed)
 
-            if (result) {
-                const resultRow = getTodo(id,req.user_id)
-                res.status(200).json(resultRow)
+                if (result) {
+                    const resultRow = getTodo(id, req.user_id)
+                    res.status(200).json(resultRow)
+                } else {
+                    res.status(404).json(notFoundError)
+                }
             } else {
-                res.status(404).json(notFoundError)
-            }                
-            }else{
                 res.status(401).json(unauthorized)
             }
 
@@ -121,10 +121,10 @@ app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
 // Delete route
 app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
     try {
-        if(req.user_id){
+        if (req.user_id) {
             const id = Number(req.params.id)
             if (Number.isInteger(id) && id > 0) {
-                const result = deleteTodo(id,req.user_id)
+                const result = deleteTodo(id, req.user_id)
                 if (result) {
                     res.status(200).send("Task Deleted Sucessfully")
                 } else {
@@ -133,10 +133,10 @@ app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
             } else {
                 res.status(400).json(invalidInputError)
             }
-    }else{
-        return res.status(401).json(unauthorized)
-    }
-        
+        } else {
+            return res.status(401).json(unauthorized)
+        }
+
 
     } catch (error) {
         res.status(500).json(internalServerError)
@@ -154,8 +154,25 @@ app.post('/auth/register', async (req: Request, res: Response) => {
             const passwordHash = await argon2.hash(password, {
                 type: argon2.argon2id
             });
-            const result = createUser(name, passwordHash)
-            res.status(201).json(result)
+            const user = createUser(name, passwordHash)
+            const sessionResult = createSession(user.id)
+            if (sessionResult) {
+                const [sessionID, expire_at] = sessionResult
+                // return cookie
+                res.cookie("sessionID", sessionID, {
+                    httpOnly: true,
+                    sameSite: "lax",
+                    expires: new Date(expire_at * 1000)
+                })
+                res.status(201).json({
+                    id: user.id,
+                    name: user.name,
+                })
+            } else {
+                return res.status(500).json(internalServerError);
+            }
+
+
         }
 
     } catch (error) {
@@ -215,21 +232,32 @@ app.post('/auth/login', async (req: Request, res: Response) => {
 })
 
 // logout route
-app.post('/auth/logout',authenticate, (req:Request,res:Response) =>{
-    try{
+app.post('/auth/logout', authenticate, (req: Request, res: Response) => {
+    try {
         const sessionID = req.cookies.sessionID
         const result = logout(sessionID)
-            res.clearCookie("sessionID",{
-                path: "/",
-                httpOnly: true,
-                sameSite: "lax"
-            })
-        if(result){
+        res.clearCookie("sessionID", {
+            path: "/",
+            httpOnly: true,
+            sameSite: "lax"
+        })
+        if (result) {
             return res.status(200).json({ message: "Logout successful" })
-        } else{
+        } else {
             return res.status(401).json({ error: "Unauthorized" });
         }
-    }catch(error){
+    } catch (error) {
+        res.status(500).json(internalServerError);
+    }
+})
+
+app.get('/auth/me', authenticate, (req: Request, res: Response) => {
+    try {
+        if (!req.user_id) return res.status(401).json(unauthorized);
+        const user = findUserById(req.user_id);
+        if (!user) return res.status(401).json(unauthorized);
+        res.status(200).json(user);
+    } catch (error) {
         res.status(500).json(internalServerError);
     }
 })

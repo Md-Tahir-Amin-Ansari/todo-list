@@ -47,3 +47,11 @@ export async function logout(): Promise<void> {
         throw new Error(errorData.error || "Failed to Logout")
     }
 }
+
+export async function getMe(): Promise<User> {
+    const res = await fetch('/auth/me');
+    if (!res.ok) {
+        throw new Error('Not authenticated');
+    }
+    return await res.json() as User;
+}
