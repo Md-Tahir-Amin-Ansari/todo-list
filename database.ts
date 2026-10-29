@@ -9,6 +9,9 @@ db.exec(`
     user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     completed INTEGER DEFAULT 0,
+    priority TEXT DEFAULT 'medium',
+    due_date TEXT,
+    tag TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id)
   )
     `)

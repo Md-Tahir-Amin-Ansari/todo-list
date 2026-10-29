@@ -6,6 +6,9 @@ import { createSession, logout } from './sessionRepository.ts';
 import argon2 from 'argon2';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middleware.ts';
+import { updateTodoSchema, createTodoSchema } from './schema.ts';
+
+
 // creates express application
 const app: Express = express();
 app.use(cors());
@@ -68,10 +71,10 @@ app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
 // post request
 app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
-
-        if (typeof req.body.name === 'string' && req.body.name.trim()) {
+        const todos = req.body
+        if (typeof todos.name === 'string' && todos.name.trim()) {
             if (req.user_id) {
-                const resultRow = postTodo(req.body.name, req.user_id)
+                const resultRow = postTodo(req.user_id, todos)
                 res.status(201).json(resultRow);
             } else {
                 return res.status(401).json(unauthorized)
@@ -92,14 +95,14 @@ app.post('/todos', authenticate, (req: Request, res: Response) => {
 
 app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
     try {
-        const completed = req.body.completed
-        const id = Number(req.params.id)
-        if (typeof completed === "boolean" && Number.isInteger(id) && id > 0) {
+        const todos = req.body
+        const todosId = Number(req.params.id)
+        if (Number.isInteger(todosId) && todosId > 0) {
             if (req.user_id) {
-                const result = patchTodo(id, req.user_id, completed)
+                const result = patchTodo(todosId, req.user_id, todos)
 
                 if (result) {
-                    const resultRow = getTodo(id, req.user_id)
+                    const resultRow = getTodo(todosId, req.user_id)
                     res.status(200).json(resultRow)
                 } else {
                     res.status(404).json(notFoundError)
@@ -126,7 +129,7 @@ app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
             if (Number.isInteger(id) && id > 0) {
                 const result = deleteTodo(id, req.user_id)
                 if (result) {
-                    res.status(200).send("Task Deleted Sucessfully")
+                    res.status(200).json({ message: "Task deleted successfully" })
                 } else {
                     res.status(404).json(notFoundError)
                 }
