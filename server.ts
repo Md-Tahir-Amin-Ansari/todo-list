@@ -72,18 +72,17 @@ app.get('/todos/:id', authenticate, (req: Request, res: Response) => {
 app.post('/todos', authenticate, (req: Request, res: Response) => {
     try {
         const todos = req.body
-        if (typeof todos.name === 'string' && todos.name.trim()) {
-            if (req.user_id) {
-                const resultRow = postTodo(req.user_id, todos)
-                res.status(201).json(resultRow);
-            } else {
-                return res.status(401).json(unauthorized)
-            }
+        const parsed = createTodoSchema.safeParse(todos);
+        if (!parsed.success) {
+            return res.status(400).json({ error: parsed.error.issues });
+        }
 
+        if (!req.user_id) {
+            return res.status(401).json(unauthorized);
         }
-        else {
-            res.status(400).json(invalidInputError)
-        }
+
+        const resultRow = postTodo(req.user_id, parsed.data);
+        res.status(201).json(resultRow);
     }
 
     catch (error) {
@@ -96,23 +95,26 @@ app.post('/todos', authenticate, (req: Request, res: Response) => {
 app.patch('/todos/:id', authenticate, (req: Request, res: Response) => {
     try {
         const todos = req.body
-        const todosId = Number(req.params.id)
-        if (Number.isInteger(todosId) && todosId > 0) {
-            if (req.user_id) {
-                const result = patchTodo(todosId, req.user_id, todos)
+        const todosId = Number(req.params.id);
+        if (!Number.isInteger(todosId) || todosId <= 0) {
+            return res.status(400).json(invalidInputError);
+        }
 
-                if (result) {
-                    const resultRow = getTodo(todosId, req.user_id)
-                    res.status(200).json(resultRow)
-                } else {
-                    res.status(404).json(notFoundError)
-                }
-            } else {
-                res.status(401).json(unauthorized)
-            }
+        if (!req.user_id) {
+            return res.status(401).json(unauthorized);
+        }
 
+        const parsed = updateTodoSchema.safeParse(todos);
+        if (!parsed.success) {
+            return res.status(400).json({ error: parsed.error.issues });
+        }
+
+        const result = patchTodo(todosId, req.user_id, parsed.data);
+        if (result) {
+            const updated = getTodo(todosId, req.user_id);
+            res.status(200).json(updated);
         } else {
-            res.status(400).json(invalidInputError)
+            res.status(404).json(notFoundError);
         }
 
     } catch (error) {
