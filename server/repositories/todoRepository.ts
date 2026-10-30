@@ -1,5 +1,5 @@
-import { db } from './database.ts';
-import { TodoAPP, TodoDB, CreateTodoInput, TodoUpdateInput } from './types.ts';
+import { db } from '../db/database.ts';
+import type { TodoAPP, TodoDB, CreateTodoInput, TodoUpdateInput } from '../types.ts';
 
 
 export function getAllTodos(user_id: number): TodoAPP[] {

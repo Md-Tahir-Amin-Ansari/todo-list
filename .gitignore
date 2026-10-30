@@ -1,7 +1,35 @@
-node_modules
+# Dependencies
+node_modules/
+client/node_modules/
 
+# Production builds
+client/dist/
+client/dist-ssr/
+
+# SQLite databases & temp files
 *.db
-
+*.db-wal
+*.db-shm
 todos.db
-context.md
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment & local files
+*.local
+.env
+.env.*.local
+
+# Editor & OS files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Design references / scratch
 Todo app – all screens.html
+context.md

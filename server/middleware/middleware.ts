@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { validateSession } from './sessionRepository.ts';
+import { validateSession } from '../repositories/sessionRepository.ts';
 
 declare global {
     namespace Express {

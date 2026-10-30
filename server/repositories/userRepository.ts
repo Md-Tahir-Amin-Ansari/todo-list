@@ -1,5 +1,5 @@
-import { db } from './database.ts';
-import { User, UserDB } from './types.ts';
+import { db } from '../db/database.ts';
+import type { User, UserDB } from '../types.ts';
 
 
 
