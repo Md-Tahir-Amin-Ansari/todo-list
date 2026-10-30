@@ -21,6 +21,13 @@ export interface Task extends TaskInput {
     id: number,
     completed: boolean
 }
+export interface TodayViewProps {
+    tasks: Task[];
+    tasksLoading: boolean;
+    onToggleTask: (id: number) => void;
+    onEditTask: (task: Task) => void;
+    onOpenCreateModal: () => void;
+}
 /**
  * UpdateTaskPayload:
  * Uses Partial<TaskInput> so callers can update any subset of editable fields

@@ -1,4 +1,5 @@
-import { Button } from "../tailgrids/core/button";
+import { Button } from "@/components/tailgrids/core/button";
+
 
 interface SettingsViewProps {
     user?: {
