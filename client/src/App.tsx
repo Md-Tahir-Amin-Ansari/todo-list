@@ -8,7 +8,7 @@ import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
 import { getMe, login, register } from '@/api/auth';
 import type { AuthCredentials, Task, TaskInput } from '@/types';
-import { getTodos, createTodos, updateTodos } from './api/todos';
+import { getTodos, createTodos, updateTodos, deleteTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
 
 
@@ -21,6 +21,7 @@ export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   // authentication
   const handleAuth = async (credentials: AuthCredentials, isSignUp: boolean) => {
     try {
@@ -65,9 +66,21 @@ export default function App() {
   // handle task create
   const handleCreateTask = async (payload: TaskInput) => {
     try {
-      const newTask = await createTodos(payload);
-      setTasks((prev) => [...prev, newTask]);
-      setIsModalOpen(false);
+      if (editingTask) {
+        const updated = await updateTodos(editingTask.id, payload);
+        // When you pass a function instead of a value to setTasks(...):
+
+        // example:
+        // setTasks((x) => ...)
+
+        // React itself calls your function behind the scenes, and React passes the most up-to-date state into that first parameter.
+        setTasks((prev) => prev.map((task) => (task.id === editingTask.id ? updated : task)))
+        handleCloseModal()
+      } else {
+        const newTask = await createTodos(payload);
+        setTasks((prev) => [...prev, newTask]);
+        handleCloseModal();
+      }
     } catch (err) {
       console.error("Failed to create task:", err);
     }
@@ -87,8 +100,25 @@ export default function App() {
 
   };
 
+  const handleDeleteTask = async () => {
+    if (!editingTask) return;
+    try {
+      await deleteTodos(editingTask.id);
+      setTasks((prev) => prev.filter((t) => t.id !== editingTask.id));
+      handleCloseModal();
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+    }
+  };
+
   const handleEditTask = (task: Task) => {
-    console.log("Edit task:", task);
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingTask(null);
   };
   if (!user) {
     return (
@@ -143,7 +173,7 @@ export default function App() {
         </main>
       </div>
 
-      <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleCreateTask} />
+      <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSave={handleCreateTask} onDelete={handleDeleteTask} task={editingTask} />
     </SidebarProvider>
   );
 }

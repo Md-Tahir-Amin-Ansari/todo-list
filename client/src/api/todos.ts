@@ -14,7 +14,12 @@ export async function createTodos(payload: TaskInput): Promise<Task> {
     const res = await fetch('/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: payload.name })
+        body: JSON.stringify({
+            name: payload.name,
+            priority: payload.priority,
+            dueDate: payload.dueDate ? payload.dueDate.toString() : null,
+            tag: payload.tag || null,
+        })
     })
     if (!res.ok) {
         const errorData = await res.json()
@@ -28,7 +33,10 @@ export async function updateTodos(id: number, payload: UpdateTaskPayload): Promi
     const res = await fetch(`/todos/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+            ...payload,
+            dueDate: payload.dueDate ? payload.dueDate.toString() : payload.dueDate
+        })
     })
     if (!res.ok) {
         const errorData = await res.json()

@@ -8,6 +8,7 @@ import { DateInput, DateSegment } from "react-aria-components";
 import type { DateValue } from "react-aria-components";
 import { FieldLabel } from "../tailgrids/core/field";
 import { ButtonGroup } from "@/components/tailgrids/core/button-group";
+import { parseDate } from '@internationalized/date';
 import { z } from "zod";
 import type { Task, TaskInput } from '@/types';
 
@@ -43,7 +44,15 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
         if (task) {
             setName(task.name);
             setPriority(task.priority);
-            setDueDate(task.dueDate ?? null);
+            if (task.dueDate) {
+                try {
+                    setDueDate(parseDate(task.dueDate.toString().split('T')[0]));
+                } catch {
+                    setDueDate(null);
+                }
+            } else {
+                setDueDate(null);
+            }
             setTag(task.tag ?? '');
             setErrorMessage(null);
 
@@ -132,8 +141,8 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
                     <div className="flex flex-col gap-1.5">
                         <FieldLabel>Tag</FieldLabel>
                         <Select
-                            value={tag}
-                            onChange={(val) => setTag(String(val))}
+                            value={tag || null}
+                            onChange={(val) => setTag(val ? String(val) : '')}
                         >
                             <SelectTrigger>
                                 <SelectValue />
@@ -142,22 +151,23 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
                             <SelectContent>
                                 <SelectItem id="work">Work</SelectItem>
                                 <SelectItem id="personal">Personal</SelectItem>
-                                <SelectItem id="other">Other</SelectItem>
+                                <SelectItem id="others">Other</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </DialogBody>
                 <DialogFooter className="flex justify-between items-center">
-                    {task && onDelete ? (
-                        <Button variant="danger" appearance="outline" onClick={onDelete}>
-                            Delete
-                        </Button>
-                    ) : <div />}
+
 
                     <div className="flex gap-2">
                         <Button variant="ghost" onClick={onClose}>
                             Cancel
                         </Button>
+                        {task && onDelete ? (
+                            <Button variant="danger" appearance="outline" onClick={onDelete}>
+                                Delete
+                            </Button>
+                        ) : <div />}
                         <Button variant="primary" onClick={handleSubmit}>
                             {task ? "Save changes" : "Add task"}
                         </Button>
