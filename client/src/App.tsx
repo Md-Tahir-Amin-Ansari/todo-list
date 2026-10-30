@@ -10,6 +10,7 @@ import { getMe, login, register } from '@/api/auth';
 import type { AuthCredentials, Task, TaskInput } from '@/types';
 import { getTodos, createTodos, updateTodos, deleteTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
+import { Spinner } from './components/tailgrids/core/spinner';
 
 
 
@@ -19,7 +20,8 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [tasksLoading, setTasksLoading] = useState<boolean>(false);
+  const [isCheckingSession, setIsCheckingSession] = useState<boolean>(true);
+  const [tasksLoading, setTasksLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   // authentication
@@ -43,10 +45,13 @@ export default function App() {
 
     async function loadTasks() {
       try {
+        setTasksLoading(true)
         const data = await getTodos();
         setTasks(data);
       } catch (err) {
         console.error("Failed to load tasks:", err);
+      } finally {
+        setTasksLoading(false)
       }
     }
 
@@ -59,9 +64,12 @@ export default function App() {
         setUser(currentUser);
       } catch {
         setUser(null);
+      } finally {
+        setIsCheckingSession(false)
       }
     }
     checkSession();
+    //  useeffect doesnt allow async function passed directly
   }, []);
   // handle task create
   const handleCreateTask = async (payload: TaskInput) => {
@@ -120,6 +128,13 @@ export default function App() {
     setIsModalOpen(false);
     setEditingTask(null);
   };
+  if (isCheckingSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background-50">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-50 p-4">
@@ -146,29 +161,35 @@ export default function App() {
               activeFilter="all"
               onFilterChange={(filter) => console.log('Filter changed:', filter)}
             />
-
-            <div className="max-w-3xl">
-              {tasks.length === 0 ? (
-                <EmptyState
-                  badge="0"
-                  title="No tasks yet"
-                  description="Add your first task and it will show up here."
-                  actionLabel="+ Add task"
-                  onAction={() => setIsModalOpen(true)}
-                />
-              ) : (
-                <div className="space-y-2">
-                  {tasks.map((task) => (
-                    <TaskItem
-                      key={task.id}
-                      task={task}
-                      onToggle={handleToggleTask}
-                      onEdit={handleEditTask}
-                    />
-                  ))}
+            {
+              tasksLoading ? (
+                <div className="flex justify-center py-12">
+                  <Spinner size="md" />
                 </div>
-              )}
-            </div>
+              ) :
+                <div className="max-w-3xl">
+                  {tasks.length === 0 ? (
+                    <EmptyState
+                      badge="0"
+                      title="No tasks yet"
+                      description="Add your first task and it will show up here."
+                      actionLabel="+ Add task"
+                      onAction={() => setIsModalOpen(true)}
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      {tasks.map((task) => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggle={handleToggleTask}
+                          onEdit={handleEditTask}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+            }
           </div>
         </main>
       </div>
