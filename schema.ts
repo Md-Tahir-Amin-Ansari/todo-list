@@ -16,3 +16,14 @@ export const createTodoSchema = z.object({
     dueDate: z.string().nullable().optional(),
     tag: z.enum(['work', 'personal', 'others']).nullable().optional(),
 });
+
+export const registerSchema = z.object({
+    name: z.string().trim().min(1, "Name is required"),
+    email: z.email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const loginSchema = z.object({
+    name: z.string().trim().min(1, "Name is required"),
+    password: z.string().min(1, "Password is required"),
+});

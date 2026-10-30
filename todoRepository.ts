@@ -1,37 +1,5 @@
 import { db } from './database.ts';
-type TodoDB = {
-    id: number;
-    name: string;
-    completed: number;
-    priority?: Priority;
-    due_date?: string | null;
-    tag?: Tag | null;
-};
-
-type TodoAPP = {
-    id: number;
-    name: string;
-    completed: boolean;
-    priority?: Priority;
-    dueDate?: string | null;
-    tag?: Tag | null;
-};
-type TodoUpdateInput = {
-    name?: string;
-    completed?: boolean;
-    priority?: Priority;
-    dueDate?: string | null;
-    tag?: Tag | null;
-}
-export type CreateTodoInput = {
-    name: string;
-    priority?: Priority;
-    dueDate?: string | null;
-    tag?: Tag | null;
-};
-type Priority = 'high' | 'low' | 'medium'
-type Tag = 'work' | 'personal' | 'others'
-
+import { TodoAPP, TodoDB, CreateTodoInput, TodoUpdateInput } from './types.ts';
 
 
 export function getAllTodos(user_id: number): TodoAPP[] {

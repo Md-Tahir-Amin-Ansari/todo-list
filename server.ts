@@ -6,7 +6,7 @@ import { createSession, logout } from './sessionRepository.ts';
 import argon2 from 'argon2';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middleware.ts';
-import { updateTodoSchema, createTodoSchema } from './schema.ts';
+import { updateTodoSchema, createTodoSchema, registerSchema, loginSchema } from './schema.ts';
 
 
 // creates express application
@@ -151,15 +151,16 @@ app.delete("/todos/:id", authenticate, (req: Request, res: Response) => {
 // registartion route
 app.post('/auth/register', async (req: Request, res: Response) => {
     try {
-        const name = req.body.name
-        const password = req.body.password
-        if (typeof name !== 'string' || typeof password !== 'string' || (name.trim() === '' || password.length < 8)) {
+        const user = req.body
+        const parsed = registerSchema.safeParse(user)
+        if (!parsed.success) {
             return res.status(400).json(invalidInputError)
         } else {
+            const { name, email, password } = parsed.data;
             const passwordHash = await argon2.hash(password, {
                 type: argon2.argon2id
             });
-            const user = createUser(name, passwordHash)
+            const user = createUser(name, email, passwordHash)
             const sessionResult = createSession(user.id)
             if (sessionResult) {
                 const [sessionID, expire_at] = sessionResult
@@ -191,12 +192,13 @@ app.post('/auth/register', async (req: Request, res: Response) => {
 // login route
 app.post('/auth/login', async (req: Request, res: Response) => {
     try {
-        const name = req.body.name
-        const password = req.body.password
+        const userInput = req.body
+        const parsed = loginSchema.safeParse(userInput)
         // check in db if the name exists
-        if (typeof name !== 'string' || typeof password !== 'string' || (name.trim() === '' || password.length < 8)) {
+        if (!parsed.success) {
             return res.status(400).json(invalidInputError)
         } else {
+            const { name, password } = parsed.data;
             const user = findUserByName(name)
             // if it doesnt exist return invalid credential
             if (!user) {
