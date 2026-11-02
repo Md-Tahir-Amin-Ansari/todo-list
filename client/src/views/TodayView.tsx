@@ -12,10 +12,11 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
         day: 'numeric',
         month: 'long',
     });
+    const todayIso = new Date().toISOString().split('T')[0];
     const overdueTasks = tasks.filter(
         (t) => t.dueDate && t.dueDate.toString().split('T')[0] < todayIso && !t.completed
     );
-    const todayIso = new Date().toISOString().split('T')[0];
+
     const dueTodayTasks = tasks.filter(
         (t) => !t.dueDate || t.dueDate.toString().split('T')[0] >= todayIso
     );

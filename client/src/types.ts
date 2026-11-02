@@ -28,6 +28,13 @@ export interface TodayViewProps {
     onEditTask: (task: Task) => void;
     onOpenCreateModal: () => void;
 }
+export interface AllTasksViewProps {
+    tasks: Task[];
+    tasksLoading: boolean;
+    onToggleTask: (id: number) => void;
+    onEditTask: (task: Task) => void;
+    onOpenCreateModal: () => void;
+}
 /**
  * UpdateTaskPayload:
  * Uses Partial<TaskInput> so callers can update any subset of editable fields

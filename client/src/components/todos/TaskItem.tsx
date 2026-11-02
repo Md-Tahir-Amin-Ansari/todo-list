@@ -18,7 +18,7 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
     const priorityConfig = PRIORITY_CONFIG[priority] ?? PRIORITY_CONFIG.medium;
     return (
         <>
-            <div className="flex items-start gap-3.5 rounded-2xl border border-base-200 bg-white p-4 shadow-xs transition-colors hover:border-base-300">
+            <div className="flex items-start gap-3.5 rounded-2xl border border-base-200 bg-white dark:bg-background-100 p-4 shadow-xs transition-colors hover:border-base-300">
                 {/* Checkbox */}
                 <Checkbox
                     checked={task.completed}

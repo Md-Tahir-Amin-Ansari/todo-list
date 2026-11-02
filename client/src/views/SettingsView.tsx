@@ -23,7 +23,7 @@ export function SettingsView({
 
             <div className="space-y-3">
                 {/* 1. Dark Mode Row */}
-                <div className="flex items-center justify-between p-4 rounded-2xl border border-base-200 bg-white">
+                <div className="flex items-center justify-between p-4 rounded-2xl border border-base-200 bg-white dark:bg-background-100">
                     <div>
                         <h2 className="text-sm font-semibold text-title-50">Dark mode</h2>
                         <p className="text-xs text-text-100">Switch the app theme</p>
@@ -45,7 +45,7 @@ export function SettingsView({
                 </div>
 
                 {/* 2. Account & Logout Row */}
-                <div className="flex items-center justify-between p-4 rounded-2xl border border-base-200 bg-white">
+                <div className="flex items-center justify-between p-4 rounded-2xl border border-base-200 bg-white dark:bg-background-100">
                     <div>
                         <h2 className="text-sm font-semibold text-title-50">Account</h2>
                         <p className="text-xs text-text-100">

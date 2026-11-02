@@ -6,13 +6,14 @@ import AuthCard from '@/components/auth/AuthCard';
 import { TaskModal } from '@/components/todos/TaskModal';
 import { TaskItem } from './components/todos/TaskItem';
 import { TaskFilters } from './components/todos/TaskFilters';
-import { getMe, login, register } from '@/api/auth';
+import { getMe, login, logout, register } from '@/api/auth';
 import type { AuthCredentials, Task, TaskInput } from '@/types';
 import { getTodos, createTodos, updateTodos, deleteTodos } from './api/todos';
 import { EmptyState } from './components/layout/EmptyState';
 import { Spinner } from './components/tailgrids/core/spinner';
-
-
+import TodayView from './views/TodayView';
+import AllTasksView from './views/AllTasksView';
+import { SettingsView } from './views/SettingsView';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('today');
@@ -128,6 +129,36 @@ export default function App() {
     setIsModalOpen(false);
     setEditingTask(null);
   };
+
+  // dark mode 
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return document.documentElement.classList.contains('dark');
+  });
+
+  const handleToggleDarkMode = () => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+      return next;
+    });
+  };
+
+  // logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      setTasks([]);
+    } catch (err) {
+      console.error("Failed to logout:", err);
+    }
+  };
   if (isCheckingSession) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-50">
@@ -153,43 +184,40 @@ export default function App() {
 
         <main className="flex-1 p-8 space-y-4">
           <div className="max-w-3xl space-y-4">
-            <h1 className="text-2xl font-bold capitalize">{currentView} Screen</h1>
 
-            <TaskFilters
-              searchQuery=""
-              onSearchChange={(query) => console.log('Search query:', query)}
-              activeFilter="all"
-              onFilterChange={(filter) => console.log('Filter changed:', filter)}
-            />
-            {
-              tasksLoading ? (
-                <div className="flex justify-center py-12">
-                  <Spinner size="md" />
-                </div>
-              ) :
-                <div className="max-w-3xl">
-                  {tasks.length === 0 ? (
-                    <EmptyState
-                      badge="0"
-                      title="No tasks yet"
-                      description="Add your first task and it will show up here."
-                      actionLabel="+ Add task"
-                      onAction={() => setIsModalOpen(true)}
-                    />
-                  ) : (
-                    <div className="space-y-2">
-                      {tasks.map((task) => (
-                        <TaskItem
-                          key={task.id}
-                          task={task}
-                          onToggle={handleToggleTask}
-                          onEdit={handleEditTask}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-            }
+
+            {currentView === 'today' && (
+              <TodayView
+                tasks={tasks}
+                tasksLoading={tasksLoading}
+                onToggleTask={handleToggleTask}
+                onEditTask={handleEditTask}
+                onOpenCreateModal={() => {
+                  setEditingTask(null);
+                  setIsModalOpen(true);
+                }}
+              />
+            )}
+            {currentView === 'all' && (
+              <AllTasksView
+                tasks={tasks}
+                tasksLoading={tasksLoading}
+                onToggleTask={handleToggleTask}
+                onEditTask={handleEditTask}
+                onOpenCreateModal={() => {
+                  setEditingTask(null);
+                  setIsModalOpen(true);
+                }}
+              />
+            )}
+            {currentView === 'settings' && (
+              <SettingsView
+                user={user ? { name: user.name, email: user.email ?? '' } : undefined}
+                isDarkMode={isDarkMode}
+                onToggleDarkMode={handleToggleDarkMode}
+                onLogout={handleLogout}
+              />
+            )}
           </div>
         </main>
       </div>

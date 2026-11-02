@@ -479,6 +479,7 @@
 }
 
 @layer base {
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -486,11 +487,78 @@
 }
 
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 0.7;
   }
+}
+
+:root.dark,
+:root[data-theme="dark"] {
+  /* Surfaces / Backgrounds */
+  --color-background-50: #0b0f19;
+  --color-background-100: #111827;
+  --color-input-background: #0b0f19;
+  --color-white: #111827;
+  --color-white-100: #ffffff;
+  --color-surface-50: #111827;
+  --color-surface-100: #111827;
+
+  /* Soft & Active Backgrounds (Sidebar items, pills, hovered rows) */
+  --color-background-soft-50: #1f2937;
+  --color-background-soft-100: #1f2937;
+  --color-background-soft-200: #374151;
+  --color-background-soft-300: #374151;
+  --color-background-soft-400: #4b5563;
+  --color-background-soft-500: #6b7280;
+
+  /* Typography / Titles */
+  --color-title-50: #f9fafb;
+  --color-title-100: #f9fafb;
+  --color-text-50: #f3f4f6;
+  --color-text-100: #9ca3af;
+  --color-text-200: #6b7280;
+  --color-text-300: #374151;
+  --color-foreground-50: #f9fafb;
+  --color-foreground-100: #f3f4f6;
+  --color-foreground-soft-50: #e5e7eb;
+  --color-foreground-soft-100: #9ca3af;
+  --color-foreground-soft-200: #9ca3af;
+  --color-input-placeholder-text: #6b7280;
+
+  /* Borders & Dividers */
+  --border-color-base-50: #1f2937;
+  --border-color-base-100: #1f2937;
+  --border-color-base-200: #1f2937;
+  --border-color-base-300: #374151;
+  --color-base-100: #1f2937;
+  --color-base-200: #1f2937;
+  --color-base-300: #374151;
+  --color-base-400: #4b5563;
+
+  /* Buttons */
+  --color-button-ghost-text: #9ca3af;
+  --color-button-ghost-hover-text: #ffffff;
+  --color-button-ghost-hover-background: #1f2937;
+  --color-button-outline-background: transparent;
+  --color-button-outline-border: #374151;
+  --color-button-outline-text: #f3f4f6;
+  --color-button-outline-hover-background: #1f2937;
+  --color-button-outline-hover-text: #ffffff;
+  --color-button-disabled-background: #1f2937;
+  --color-button-disabled-border: #374151;
+  --color-button-disabled-text: #6b7280;
+
+  /* Badges & Accents */
+  --color-badge-neutral-background: #1f2937;
+  --color-badge-neutral-text: #e5e7eb;
+  --color-badge-neutral-icon-color: #9ca3af;
+  --color-primary-50: #1e293b;
+  --color-primary-100: #1e3a8a;
+  --color-primary-400: #818cf8;
 }
