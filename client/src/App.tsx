@@ -25,6 +25,19 @@ export default function App() {
   const [tasksLoading, setTasksLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = saved ? saved === 'dark' : prefersDark;
+    if (initialDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    return initialDark;
+  });
   // authentication
   const handleAuth = async (credentials: AuthCredentials, isSignUp: boolean) => {
     try {
@@ -131,13 +144,12 @@ export default function App() {
   };
 
   // dark mode 
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return document.documentElement.classList.contains('dark');
-  });
-
   const handleToggleDarkMode = () => {
     setIsDarkMode((prev) => {
       const next = !prev;
+      const theme = next ? 'dark' : 'light';
+
+      localStorage.setItem('theme', theme);
       if (next) {
         document.documentElement.classList.add('dark');
         document.documentElement.setAttribute('data-theme', 'dark');
