@@ -561,6 +561,31 @@
   --color-primary-50: #1e293b;
   --color-primary-100: #1e3a8a;
   --color-primary-400: #818cf8;
+
+  /* Card Backgrounds */
+  --color-card-background-50: #111827;
+  --color-card-background-100: #1f2937;
+  --color-card-background-200: #1f2937;
+  --color-card-background-300: #111827;
+
+  /* Checkbox */
+  --color-checkbox-background: #111827;
+  --color-checkbox-checked-background: #3758f9;
+  --color-checkbox-checked-border: #3758f9;
+  --color-checkbox-checked-icon-color: #ffffff;
+
+  /* Dropdowns */
+  --color-dropdown-background: #111827;
+  --color-dropdown-hover-background: #1f2937;
+  --color-dropdown-secondary-background: #111827;
+  --color-dropdown-divider: #1f2937;
+
+  /* Danger Outline Button in Dark Mode */
+  --color-button-error-outline-background: transparent;
+  --color-button-error-outline-hover-background: rgba(239, 68, 68, 0.15);
+  --color-button-error-outline-border: #ef4444;
+  --color-button-error-outline-text: #f87171;
+  --color-button-error-outline-hover-text: #fca5a5;
 }
 
 html,
