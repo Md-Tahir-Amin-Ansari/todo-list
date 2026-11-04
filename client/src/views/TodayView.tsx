@@ -3,6 +3,7 @@ import { Spinner } from "@/components/tailgrids/core/spinner";
 import { ProgressRing } from "@/components/todos/ProgressRing";
 import { TaskItem } from "@/components/todos/TaskItem";
 import { EmptyState } from "@/components/layout/EmptyState";
+import { Calendar } from "@tailgrids/icons";
 import type { TodayViewProps } from "@/types";
 
 export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTask, onOpenCreateModal }: TodayViewProps) {
@@ -18,8 +19,11 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
         (t) => t.dueDate && t.dueDate.toString().split('T')[0] < todayIso && !t.completed
     );
 
-    const dueTodayTasks = tasks.filter(
-        (t) => !t.dueDate || t.dueDate.toString().split('T')[0] >= todayIso
+    const dueTodayTasks = tasks.filter((t) => {
+        if (!t.dueDate) return false; // undefined dueDate does not belong in "Due today"
+        const taskDate = t.dueDate.toString().split('T')[0];
+        return taskDate === todayIso;
+    }
     );
     const renderContent = () => {
         if (overdueTasks.length === 0 && dueTodayTasks.length === 0) {
@@ -62,7 +66,15 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
                     <div className="space-y-2.5">
                         <h2 className="text-sm font-bold text-text-100">Due today</h2>
                         {dueTodayTasks.length === 0 ? (
-                            <p className="text-sm text-text-200">Nothing due today.</p>
+                            <EmptyState
+                                badge={
+                                    <div className="flex size-12 items-center justify-center rounded-full bg-base-100 dark:bg-base-900 text-text-200">
+                                        <Calendar className="size-6" />
+                                    </div>
+                                }
+                                title="Nothing due today"
+                                description="All clear for the rest of today!"
+                            />
                         ) : (
                             <div className="space-y-2">
                                 {dueTodayTasks.map((task) => (
