@@ -2,6 +2,7 @@ import { Button } from "@/components/tailgrids/core/button";
 import { Spinner } from "@/components/tailgrids/core/spinner";
 import { ProgressRing } from "@/components/todos/ProgressRing";
 import { TaskItem } from "@/components/todos/TaskItem";
+import { EmptyState } from "@/components/layout/EmptyState";
 import type { TodayViewProps } from "@/types";
 
 export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTask, onOpenCreateModal }: TodayViewProps) {
@@ -20,26 +21,32 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
     const dueTodayTasks = tasks.filter(
         (t) => !t.dueDate || t.dueDate.toString().split('T')[0] >= todayIso
     );
+    const renderContent = () => {
+        if (overdueTasks.length === 0 && dueTodayTasks.length === 0) {
+            if (tasks.length === 0) {
+                return (
+                    <EmptyState
+                        badge="0"
+                        title="No tasks yet"
+                        description="Get started by adding your first task for today."
+                        actionLabel="+ Add task"
+                        onAction={onOpenCreateModal}
+                    />
+                )
+            } else {
+                return (
+                    <EmptyState
+                        badge="✓"
+                        title="All caught up!"
+                        description="You have no pending tasks for today. Relax or plan ahead."
+                        actionLabel="+ Add task"
+                        onAction={onOpenCreateModal}
+                    />
+                )
 
-    return (
-        <>
-            <div className="flex items-end justify-between mb-7">
-                <div>
-                    <div className="text-sm font-medium text-text-200">{dateFormatted}</div>
-                    <h1 className="text-3xl font-extrabold tracking-tight text-title-50">Today</h1>
-                </div>
-                <div className="flex items-center gap-4">
-                    <ProgressRing completed={completedCount} total={totalCount} />
-                    <Button variant="primary" onClick={onOpenCreateModal}>
-                        + Add task
-                    </Button>
-                </div>
-            </div>
-            {tasksLoading ? (
-                <div className="flex justify-center py-12">
-                    <Spinner size="md" />
-                </div>
-            ) : (
+            }
+        } else {
+            return (
                 <div className="space-y-6">
                     {overdueTasks.length > 0 && (
                         <div className="space-y-2.5">
@@ -65,6 +72,30 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
                         )}
                     </div>
                 </div>
+            )
+        }
+    }
+
+    return (
+        <>
+            <div className="flex items-end justify-between mb-7">
+                <div>
+                    <div className="text-sm font-medium text-text-200">{dateFormatted}</div>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-title-50">Today</h1>
+                </div>
+                <div className="flex items-center gap-4">
+                    <ProgressRing completed={completedCount} total={totalCount} />
+                    <Button variant="primary" onClick={onOpenCreateModal}>
+                        + Add task
+                    </Button>
+                </div>
+            </div>
+            {tasksLoading ? (
+                <div className="flex justify-center py-12">
+                    <Spinner size="md" />
+                </div>
+            ) : (
+                renderContent()
             )}
         </>
 
