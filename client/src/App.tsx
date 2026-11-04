@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SidebarProvider } from '@/components/tailgrids/core/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/tailgrids/core/sidebar';
 import { AppSidebar } from '@/components/layout/Sidebar';
 import { type ViewType } from '@/types';
 import AuthCard from '@/components/auth/AuthCard';
@@ -11,6 +11,7 @@ import { SettingsView } from './views/SettingsView';
 import { useTheme } from './hooks/useTheme';
 import { useAuth } from './hooks/useAuth';
 import { useTasks } from './hooks/useTasks';
+import { AngleDoubleLeft } from '@tailgrids/icons';
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('today');
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -60,7 +61,9 @@ export default function App() {
 
       <main className="flex-1 p-8 space-y-4  h-full overflow-y-auto">
         <div className="max-w-3xl space-y-4">
-
+          <SidebarTrigger>
+            <AngleDoubleLeft className="group-data-[sidebar=closed]/sidebar-wrapper:rotate-180 duration-300" />
+          </SidebarTrigger>
 
           {currentView === 'today' && (
             <TodayView
