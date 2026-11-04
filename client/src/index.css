@@ -562,3 +562,10 @@
   --color-primary-100: #1e3a8a;
   --color-primary-400: #818cf8;
 }
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}

@@ -54,44 +54,44 @@ export default function App() {
     );
   }
   else return (
-    <SidebarProvider defaultOpen>
-      <div className="flex min-h-screen w-full bg-background-50">
-        <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} />
+    <SidebarProvider defaultOpen className="h-screen overflow-hidden bg-background-50">
 
-        <main className="flex-1 p-8 space-y-4">
-          <div className="max-w-3xl space-y-4">
+      <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} />
+
+      <main className="flex-1 p-8 space-y-4  h-full overflow-y-auto">
+        <div className="max-w-3xl space-y-4">
 
 
-            {currentView === 'today' && (
-              <TodayView
-                tasks={tasks}
-                tasksLoading={tasksLoading}
-                onToggleTask={handleToggleTask}
-                onEditTask={handleEditTask}
-                onOpenCreateModal={handleOpenCreateModal}
-              />
-            )}
-            {currentView === 'all' && (
-              <AllTasksView
-                tasks={tasks}
-                tasksLoading={tasksLoading}
-                onToggleTask={handleToggleTask}
-                onEditTask={handleEditTask}
-                onOpenCreateModal={handleOpenCreateModal
-                }
-              />
-            )}
-            {currentView === 'settings' && (
-              <SettingsView
-                user={user ? { name: user.name, email: user.email ?? '' } : undefined}
-                isDarkMode={isDarkMode}
-                onToggleDarkMode={toggleDarkMode}
-                onLogout={handleLogout}
-              />
-            )}
-          </div>
-        </main>
-      </div>
+          {currentView === 'today' && (
+            <TodayView
+              tasks={tasks}
+              tasksLoading={tasksLoading}
+              onToggleTask={handleToggleTask}
+              onEditTask={handleEditTask}
+              onOpenCreateModal={handleOpenCreateModal}
+            />
+          )}
+          {currentView === 'all' && (
+            <AllTasksView
+              tasks={tasks}
+              tasksLoading={tasksLoading}
+              onToggleTask={handleToggleTask}
+              onEditTask={handleEditTask}
+              onOpenCreateModal={handleOpenCreateModal
+              }
+            />
+          )}
+          {currentView === 'settings' && (
+            <SettingsView
+              user={user ? { name: user.name, email: user.email ?? '' } : undefined}
+              isDarkMode={isDarkMode}
+              onToggleDarkMode={toggleDarkMode}
+              onLogout={handleLogout}
+            />
+          )}
+        </div>
+      </main>
+
 
       <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSave={handleCreateTask} onDelete={handleDeleteTask} task={editingTask} />
     </SidebarProvider>
