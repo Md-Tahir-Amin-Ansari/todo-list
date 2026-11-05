@@ -7,8 +7,6 @@ import { Calendar } from "@tailgrids/icons";
 import type { TodayViewProps } from "@/types";
 
 export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTask, onOpenCreateModal }: TodayViewProps) {
-    const completedCount = tasks.filter(t => t.completed).length;
-    const totalCount = tasks.length;
     const dateFormatted = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         day: 'numeric',
@@ -25,6 +23,16 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
         return taskDate === todayIso;
     }
     );
+    // Tasks relevant to Today's screen:
+    const todayTasks = tasks.filter((t) => {
+        if (!t.dueDate) return false;
+        const taskDate = t.dueDate.toString().split('T')[0];
+        // Include today's tasks OR overdue incomplete tasks
+        return taskDate === todayIso || (taskDate < todayIso && !t.completed);
+    });
+    const totalTodayCount = todayTasks.length;
+    const completedTodayCount = todayTasks.filter((t) => t.completed).length;
+
     const renderContent = () => {
         if (overdueTasks.length === 0 && dueTodayTasks.length === 0) {
             if (tasks.length === 0) {
@@ -96,7 +104,7 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
                     <h1 className="text-3xl font-extrabold tracking-tight text-title-50">Today</h1>
                 </div>
                 <div className="flex items-center gap-4">
-                    <ProgressRing completed={completedCount} total={totalCount} />
+                    <ProgressRing completed={completedTodayCount} total={totalTodayCount} />
                     <Button variant="primary" onClick={onOpenCreateModal}>
                         + Add task
                     </Button>
