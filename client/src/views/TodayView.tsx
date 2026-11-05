@@ -23,15 +23,8 @@ export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTas
         return taskDate === todayIso;
     }
     );
-    // Tasks relevant to Today's screen:
-    const todayTasks = tasks.filter((t) => {
-        if (!t.dueDate) return false;
-        const taskDate = t.dueDate.toString().split('T')[0];
-        // Include today's tasks OR overdue incomplete tasks
-        return taskDate === todayIso || (taskDate < todayIso && !t.completed);
-    });
-    const totalTodayCount = todayTasks.length;
-    const completedTodayCount = todayTasks.filter((t) => t.completed).length;
+    const totalTodayCount = dueTodayTasks.length + overdueTasks.length;;
+    const completedTodayCount = dueTodayTasks.filter(t => t.completed).length;
 
     const renderContent = () => {
         if (overdueTasks.length === 0 && dueTodayTasks.length === 0) {

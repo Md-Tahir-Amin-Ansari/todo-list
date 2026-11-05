@@ -26,6 +26,7 @@ export default function App() {
   const {
     tasks,
     tasksLoading,
+    counts,
     isModalOpen,
     editingTask,
     handleOpenCreateModal,
@@ -57,7 +58,8 @@ export default function App() {
   else return (
     <SidebarProvider defaultOpen className="h-screen overflow-hidden bg-background-50">
 
-      <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} />
+      <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} todayCount={counts.today}
+        allCount={counts.all} />
 
       <main className="flex-1 p-8 space-y-4  h-full overflow-y-auto">
         <SidebarTrigger>

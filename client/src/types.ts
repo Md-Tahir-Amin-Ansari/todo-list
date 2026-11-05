@@ -35,6 +35,14 @@ export interface AllTasksViewProps {
     onEditTask: (task: Task) => void;
     onOpenCreateModal: () => void;
 }
+
+export interface SidebarProps {
+    currentView: ViewType;
+    onSelectView: (view: ViewType) => void;
+    user?: User;
+    todayCount?: number;
+    allCount?: number;
+}
 /**
  * UpdateTaskPayload:
  * Uses Partial<TaskInput> so callers can update any subset of editable fields

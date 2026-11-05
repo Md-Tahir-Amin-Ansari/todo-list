@@ -1,6 +1,6 @@
 import { createTodos, deleteTodos, getTodos, updateTodos } from "@/api/todos";
 import type { Task, TaskInput, User } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export function useTasks(user: User | null) {
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -11,6 +11,19 @@ export function useTasks(user: User | null) {
         setEditingTask(null);
         setIsModalOpen(true);
     };
+    const counts = useMemo(() => {
+        const todayISO = new Date().toISOString().split('T')[0];
+
+        //Tasks needing attention today: incomplete AND (due today or overdue)
+        const today = tasks.filter((task) => {
+            if (!task.dueDate || task.completed) return false;
+            const taskDate = task.dueDate.toString().split('T')[0];
+            return taskDate <= todayISO;
+        }).length;
+
+        const all = tasks.filter((task) => !task.completed).length;
+        return { today, all };
+    }, [tasks]);
     // handle task create
     const handleCreateTask = async (payload: TaskInput) => {
         try {
@@ -94,6 +107,7 @@ export function useTasks(user: User | null) {
     return {
         tasks,
         tasksLoading,
+        counts,
         isModalOpen,
         setIsModalOpen,
         editingTask,

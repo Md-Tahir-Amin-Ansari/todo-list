@@ -11,18 +11,13 @@ import {
 import {
     Calendar,
     Gear1,
-    Home,
-    MusicList2
+    Home
 } from "@tailgrids/icons";
-import type { User, ViewType } from '@/types';
+import type { SidebarProps } from '@/types';
 
 
 
-interface SidebarProps {
-    currentView: ViewType;
-    onSelectView: (view: ViewType) => void;
-    user?: User;
-}
+
 
 const NAV_ITEMS = [
     { id: 'today', label: 'Today', icon: Calendar },
@@ -31,7 +26,7 @@ const NAV_ITEMS = [
 ] as const;
 
 
-export function AppSidebar({ currentView, onSelectView, user }: SidebarProps) {
+export function AppSidebar({ currentView, onSelectView, user, todayCount, allCount }: SidebarProps) {
     return (
 
         <Sidebar collapsible="icon">
@@ -61,6 +56,18 @@ export function AppSidebar({ currentView, onSelectView, user }: SidebarProps) {
                                     >
                                         <Icon className="size-4" />
                                         <span className='group-data-[collapsible=icon]:hidden'>{item.label}</span>
+                                        {/* Today badge */}
+                                        {item.id === 'today' && !!todayCount && (
+                                            <span className="ml-auto rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-950 dark:text-primary-300 group-data-[collapsible=icon]:hidden">
+                                                {todayCount}
+                                            </span>
+                                        )}
+                                        {/* All tasks badge */}
+                                        {item.id === 'all' && !!allCount && (
+                                            <span className="ml-auto rounded-full bg-base-100 px-2 py-0.5 text-xs font-semibold text-text-100 dark:bg-base-800 dark:text-text-200 group-data-[collapsible=icon]:hidden">
+                                                {allCount}
+                                            </span>
+                                        )}
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             );
