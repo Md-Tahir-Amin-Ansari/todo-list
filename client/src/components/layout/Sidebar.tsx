@@ -58,13 +58,13 @@ export function AppSidebar({ currentView, onSelectView, user, todayCount, allCou
                                         <span className='group-data-[collapsible=icon]:hidden'>{item.label}</span>
                                         {/* Today badge */}
                                         {item.id === 'today' && !!todayCount && (
-                                            <span className="ml-auto rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-700 dark:bg-primary-950 dark:text-primary-300 group-data-[collapsible=icon]:hidden">
+                                            <span className="ml-auto rounded-full bg-primary-500 px-2 py-0.5 text-xs font-bold text-white  group-data-[collapsible=icon]:hidden">
                                                 {todayCount}
                                             </span>
                                         )}
                                         {/* All tasks badge */}
                                         {item.id === 'all' && !!allCount && (
-                                            <span className="ml-auto rounded-full bg-base-100 px-2 py-0.5 text-xs font-semibold text-text-100 dark:bg-base-800 dark:text-text-200 group-data-[collapsible=icon]:hidden">
+                                            <span className="ml-auto rounded-full bg-base-200 dark:bg-base-700 px-2 py-0.5 text-xs font-semibold text-text-100 dark:text-text-300 group-data-[collapsible=icon]:hidden">
                                                 {allCount}
                                             </span>
                                         )}

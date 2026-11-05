@@ -10,7 +10,7 @@ interface TaskItemProps {
 const PRIORITY_CONFIG = {
     high: { label: 'High', color: 'bg-error-500' },
     medium: { label: 'Medium', color: 'bg-warning-500' },
-    low: { label: 'Low', color: 'bg-base-400' },
+    low: { label: 'Low', color: 'bg-text-100' },
 } as const;
 
 export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {

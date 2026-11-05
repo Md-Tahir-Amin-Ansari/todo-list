@@ -34,7 +34,7 @@ export function SettingsView({
                         role="switch"
                         aria-checked={isDarkMode}
                         onClick={onToggleDarkMode}
-                        className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDarkMode ? "bg-primary-500" : "bg-base-300"
+                        className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDarkMode ? "bg-primary-500" : "bg-text-300 dark:bg-base-300"
                             }`}
                     >
                         <span
