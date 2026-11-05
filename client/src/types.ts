@@ -43,6 +43,19 @@ export interface SidebarProps {
     todayCount?: number;
     allCount?: number;
 }
+export interface TaskModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (payload: TaskInput) => void;
+    onDelete?: () => void;
+    task?: Task;
+}
+export interface AuthCardProps {
+    onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
+    errorMessage?: string;
+    loading?: boolean;
+}
+
 /**
  * UpdateTaskPayload:
  * Uses Partial<TaskInput> so callers can update any subset of editable fields

@@ -3,28 +3,9 @@ import { Button } from "../tailgrids/core/button";
 import { Label } from "../tailgrids/core/label";
 import { Input } from "../tailgrids/core/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../tailgrids/core/card";
-import { z } from "zod";
 import { TextField } from "../tailgrids/core/text-field";
-import type { AuthCredentials } from '@/types';
-
-interface AuthCardProps {
-    onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
-    errorMessage?: string;
-    loading?: boolean;
-}
-
-const LoginSchema = z.object({
-    name: z.string().min(3, "Name too short"),
-    password: z.string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Must contain at least 1 uppercase letter")
-        .regex(/[0-9]/, "Must contain at least 1 number")
-        .regex(/[^A-Za-z0-9]/, "Must contain at least 1 symbol")
-});
-const SignUpSchema = LoginSchema.extend({
-    email: z.email("Invalid Email")
-
-})
+import type { AuthCardProps } from '@/types';
+import { LoginSchema, SignUpSchema } from "@/schema";
 
 export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardProps) {
 

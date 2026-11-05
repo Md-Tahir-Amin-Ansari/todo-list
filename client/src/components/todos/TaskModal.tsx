@@ -11,7 +11,7 @@ import { ButtonGroup } from "@/components/tailgrids/core/button-group";
 import { parseDate } from '@internationalized/date';
 import { AlertDialog } from "@/components/tailgrids/core/alert-dialog";
 import { z } from "zod";
-import type { Task, TaskInput } from '@/types';
+import type { TaskModalProps } from '@/types';
 
 const taskSchema = z.object({
     name: z
@@ -22,14 +22,6 @@ const taskSchema = z.object({
     tag: z.string().optional(),
     dueDate: z.any().nullable().optional(),
 });
-
-interface TaskModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (payload: TaskInput) => void;
-    onDelete?: () => void;
-    task?: Task;
-}
 
 
 export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModalProps) {
