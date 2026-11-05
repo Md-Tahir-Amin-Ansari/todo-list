@@ -9,6 +9,7 @@ import type { DateValue } from "react-aria-components";
 import { FieldLabel } from "../tailgrids/core/field";
 import { ButtonGroup } from "@/components/tailgrids/core/button-group";
 import { parseDate } from '@internationalized/date';
+import { AlertDialog } from "@/components/tailgrids/core/alert-dialog";
 import { z } from "zod";
 import type { Task, TaskInput } from '@/types';
 
@@ -38,9 +39,10 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
     const [dueDate, setDueDate] = useState<DateValue | null>(null);
     const [tag, setTag] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     // sync for when open
     useEffect(() => {
+        setShowConfirmDelete(false);
         if (task) {
             setName(task.name);
             setPriority(task.priority);
@@ -164,7 +166,7 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
                             Cancel
                         </Button>
                         {task && onDelete ? (
-                            <Button variant="danger" appearance="outline" onClick={onDelete}>
+                            <Button variant="danger" appearance="outline" onClick={() => { setShowConfirmDelete(true) }}>
                                 Delete
                             </Button>
                         ) : <div />}
@@ -175,6 +177,33 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
                 </DialogFooter>
 
             </Dialog>
+            <AlertDialog
+                isOpen={showConfirmDelete}
+                onOpenChange={setShowConfirmDelete}
+            >
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="text-lg font-bold text-title-50">Delete Task</h3>
+                        <p className="mt-1.5 text-sm text-text-100">
+                            Are you sure you want to delete <span className="font-semibold text-title-50">"{task?.name}"</span>? This action cannot be undone.
+                        </p>
+                    </div>
+                    <div className="flex justify-end gap-3 pt-2">
+                        <Button variant="ghost" onClick={() => setShowConfirmDelete(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={() => {
+                                setShowConfirmDelete(false);
+                                onDelete?.();
+                            }}
+                        >
+                            Yes, delete
+                        </Button>
+                    </div>
+                </div>
+            </AlertDialog>
         </>
     );
 }
