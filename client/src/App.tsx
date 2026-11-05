@@ -60,10 +60,11 @@ export default function App() {
       <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} />
 
       <main className="flex-1 p-8 space-y-4  h-full overflow-y-auto">
-        <div className="max-w-3xl space-y-4">
-          <SidebarTrigger>
-            <AngleDoubleLeft className="group-data-[sidebar=closed]/sidebar-wrapper:rotate-180 duration-300" />
-          </SidebarTrigger>
+        <SidebarTrigger>
+          <AngleDoubleLeft className="group-data-[sidebar=closed]/sidebar-wrapper:rotate-180 duration-300" />
+        </SidebarTrigger>
+        <div className="max-w-3xl space-y-4 mx-auto">
+
 
           {currentView === 'today' && (
             <TodayView
