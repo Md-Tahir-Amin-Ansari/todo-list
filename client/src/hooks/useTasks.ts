@@ -1,7 +1,7 @@
 import { createTodos, deleteTodos, getTodos, updateTodos } from "@/api/todos";
 import type { Task, TaskInput, User } from "@/types";
 import { useEffect, useState, useMemo } from "react";
-
+import { toast } from 'sonner';
 export function useTasks(user: User | null) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [tasksLoading, setTasksLoading] = useState<boolean>(true);
@@ -36,14 +36,17 @@ export function useTasks(user: User | null) {
 
                 // React itself calls your function behind the scenes, and React passes the most up-to-date state into that first parameter.
                 setTasks((prev) => prev.map((task) => (task.id === editingTask.id ? updated : task)))
-                handleCloseModal()
+                handleCloseModal();
+                toast.success("Task updated");
             } else {
                 const newTask = await createTodos(payload);
                 setTasks((prev) => [...prev, newTask]);
                 handleCloseModal();
+                toast.success("Task created");
             }
         } catch (err) {
             console.error("Failed to create task:", err);
+            toast.error("Failed to save task. Please try again.");
         }
     };
     const handleToggleTask = async (id: number) => {
@@ -57,6 +60,7 @@ export function useTasks(user: User | null) {
             );
         } catch (error) {
             console.error("Failed to toggle task:", error);
+            toast.error("Failed to update status");
         }
 
     };
@@ -67,8 +71,10 @@ export function useTasks(user: User | null) {
             await deleteTodos(editingTask.id);
             setTasks((prev) => prev.filter((t) => t.id !== editingTask.id));
             handleCloseModal();
+            toast.success("Task deleted");
         } catch (err) {
             console.error("Failed to delete task:", err);
+            toast.error("Failed to delete task");
         }
     };
 

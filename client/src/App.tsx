@@ -12,6 +12,7 @@ import { useTheme } from './hooks/useTheme';
 import { useAuth } from './hooks/useAuth';
 import { useTasks } from './hooks/useTasks';
 import { AngleDoubleLeft } from '@tailgrids/icons';
+import { Toaster } from 'sonner';
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('today');
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -57,6 +58,7 @@ export default function App() {
   }
   else return (
     <SidebarProvider defaultOpen className="h-screen overflow-hidden bg-background-50">
+      <Toaster richColors theme={isDarkMode ? 'dark' : 'light'} position="bottom-right" />
 
       <AppSidebar currentView={currentView} onSelectView={setCurrentView} user={user} todayCount={counts.today}
         allCount={counts.all} />
