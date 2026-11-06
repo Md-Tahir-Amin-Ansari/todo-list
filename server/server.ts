@@ -1,4 +1,10 @@
-import express, { type Express, type Request, type Response } from 'express';
+/**
+ * @file server.ts
+ * @brief Main entry point for the backend http server
+ * @details Initializes Express. register global middlewares (CORS, body parsing, cookies), mounts authetication and todo routes, and start the server listner
+ */
+
+import express, { type Express } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/authRoutes.ts';

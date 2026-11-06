@@ -1,0 +1,46 @@
+# Project Info
+PROJECT_NAME           = "Doable - Todo App"
+PROJECT_BRIEF          = "Fullstack Todo App built with React, Vite, Express, and SQLite"
+PROJECT_NUMBER         = "1.0.0"
+
+# Output Directory
+OUTPUT_DIRECTORY       = docs
+
+# Source Code Input
+INPUT                  = server client/src README.md roadmap.md
+USE_MDFILE_AS_MAINPAGE = README.md
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */node_modules/* */dist/* */build/* */.git/* */components/tailgrids/*
+FILE_PATTERNS          = *.ts *.tsx *.js *.jsx *.md
+
+# TypeScript / Modern JS Settings
+EXTENSION_MAPPING      = js=Javascript ts=Javascript tsx=Javascript
+OPTIMIZE_OUTPUT_JAVA   = YES
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = YES
+
+# Extraction Settings - Only document documented items
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+
+# Preprocessor - Strip ES6 imports
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+SEARCH_INCLUDES        = NO
+EXCLUDE_SYMBOLS        = import export
+
+# Output Formats
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+
+# Visuals & Navigation
+HTML_COLORSTYLE        = AUTO_LIGHT
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = YES
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES

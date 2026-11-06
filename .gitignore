@@ -33,3 +33,6 @@ pnpm-debug.log*
 # Design references / scratch
 Todo app – all screens.html
 context.md
+
+# Doxygen generated docs
+docs/
