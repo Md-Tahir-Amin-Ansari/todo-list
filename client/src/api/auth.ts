@@ -1,5 +1,15 @@
+/**
+ * @file auth.ts
+ * @brief HTTP client API functions for authentication endpoints.
+ */
 import { type User, type AuthCredentials } from '@/types.ts'
 
+/**
+ * @brief Sends login request with credentials.
+ * @param credentials User name and password.
+ * @returns Promise resolving to the authenticated `User` profile.
+ * @throws Error if network request fails or server returns error status.
+ */
 export async function login(credentials: AuthCredentials): Promise<User> {
 
     const res = await fetch('/auth/login', {
@@ -17,7 +27,12 @@ export async function login(credentials: AuthCredentials): Promise<User> {
     }
 
 }
-
+/**
+ * @brief Registers a new user account.
+ * @param credentials Name, email, and password.
+ * @returns Promise resolving to the newly created `User` profile.
+ * @throws Error if validation fails or username/email already exists.
+ */
 export async function register(credentials: AuthCredentials): Promise<User> {
     const res = await fetch('/auth/register', {
         method: 'POST',
@@ -34,7 +49,11 @@ export async function register(credentials: AuthCredentials): Promise<User> {
     }
 
 }
-
+/**
+ * @brief Logs out the current user session.
+ * @returns Promise resolving when session cookie is cleared.
+ * @throws Error if logout request fails.
+ */
 export async function logout(): Promise<void> {
     const res = await fetch('/auth/logout', {
         method: 'POST',
@@ -47,7 +66,11 @@ export async function logout(): Promise<void> {
         throw new Error(errorData.error || "Failed to Logout")
     }
 }
-
+/**
+ * @brief Fetches currently authenticated user profile from active session cookie.
+ * @returns Promise resolving to `User` profile.
+ * @throws Error if session is missing or expired (401).
+ */
 export async function getMe(): Promise<User> {
     const res = await fetch('/auth/me');
     if (!res.ok) {

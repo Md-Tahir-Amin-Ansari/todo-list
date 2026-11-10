@@ -1,0 +1,28 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/types.ts",
+    "src/schema.ts",
+    "src/hooks/useTasks.ts",
+    "src/hooks/useAuth.ts",
+    "src/hooks/useTheme.ts",
+    "src/api/todos.ts",
+    "src/api/auth.ts"
+  ],
+  "entryPointStrategy": "resolve",
+  "out": "../docs/client",
+  "name": "Doable - Frontend Architecture & Hooks Reference",
+  "tsconfig": "./tsconfig.app.json",
+  "cleanOutputDir": true,
+  "gitRevision": "main",
+  "skipErrorChecking": true,
+  "blockTags": [
+    "@brief",
+    "@details",
+    "@note",
+    "@throws",
+    "@params"
+  ]
+}
+
+
