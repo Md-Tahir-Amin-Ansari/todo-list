@@ -1,7 +1,30 @@
+/**
+ * @file useTasks.ts
+ * @brief Custom React hook managing task state, CRUD operations, and derived metrics.
+ * @details Handles server synchronization via API calls, optimistic UI updates,
+ *          modal visibility states, and toast notifications for task operations.
+ */
 import { createTodos, deleteTodos, getTodos, updateTodos } from "@/api/todos";
 import type { Task, TaskInput, User } from "@/types";
 import { useEffect, useState, useMemo } from "react";
 import { toast } from 'sonner';
+
+/**
+ * @brief Manages task lifecycle, filtering counts, and modal interactions for the authenticated user.
+ * @param user The current authenticated user session, or null if unauthenticated.
+ * @returns An object containing:
+ *  - `tasks`: Array of current tasks.
+ *  - `tasksLoading`: Boolean loading state during initial fetch.
+ *  - `counts`: Memoized task metrics (`today`, `all`).
+ *  - `isModalOpen`: State of the task creation/editing modal.
+ *  - `editingTask`: Task currently selected for editing, or null.
+ *  - `handleOpenCreateModal`: Opens the modal in create mode.
+ *  - `handleCreateTask`: Creates or updates a task on the server.
+ *  - `handleToggleTask`: Toggles task completion status.
+ *  - `handleDeleteTask`: Deletes the currently edited task.
+ *  - `handleEditTask`: Sets selected task and opens the modal.
+ *  - `handleCloseModal`: Closes the task modal and clears active selection.
+ */
 export function useTasks(user: User | null) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [tasksLoading, setTasksLoading] = useState<boolean>(true);
