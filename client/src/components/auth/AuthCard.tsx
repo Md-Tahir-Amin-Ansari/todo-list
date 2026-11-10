@@ -4,8 +4,13 @@ import { Label } from "../tailgrids/core/label";
 import { Input } from "../tailgrids/core/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../tailgrids/core/card";
 import { TextField } from "../tailgrids/core/text-field";
-import type { AuthCardProps } from '@/types';
+import type { AuthCredentials } from '@/types';
 import { LoginSchema, SignUpSchema } from "@/schema";
+export interface AuthCardProps {
+    onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
+    errorMessage?: string;
+    loading?: boolean;
+}
 
 export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardProps) {
 

@@ -10,19 +10,16 @@ import { FieldLabel } from "../tailgrids/core/field";
 import { ButtonGroup } from "@/components/tailgrids/core/button-group";
 import { parseDate } from '@internationalized/date';
 import { AlertDialog } from "@/components/tailgrids/core/alert-dialog";
-import { z } from "zod";
-import type { TaskModalProps } from '@/types';
+import type { Task, TaskInput } from '@/types';
+import { taskSchema } from "@/schema";
 
-const taskSchema = z.object({
-    name: z
-        .string()
-        .trim()
-        .min(1, "Title is required"),
-    priority: z.enum(["high", "medium", "low"]).default("medium"),
-    tag: z.string().optional(),
-    dueDate: z.any().nullable().optional(),
-});
-
+export interface TaskModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (payload: TaskInput) => void;
+    onDelete?: () => void;
+    task?: Task;
+}
 
 export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModalProps) {
     // states

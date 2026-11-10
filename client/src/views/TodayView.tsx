@@ -4,8 +4,15 @@ import { ProgressRing } from "@/components/todos/ProgressRing";
 import { TaskItem } from "@/components/todos/TaskItem";
 import { EmptyState } from "@/components/layout/EmptyState";
 import { Calendar } from "@tailgrids/icons";
-import type { TodayViewProps } from "@/types";
+import type { Task } from "@/types";
 
+export interface TodayViewProps {
+    tasks: Task[];
+    tasksLoading: boolean;
+    onToggleTask: (id: number) => void;
+    onEditTask: (task: Task) => void;
+    onOpenCreateModal: () => void;
+}
 export default function TodayView({ tasks, tasksLoading, onToggleTask, onEditTask, onOpenCreateModal }: TodayViewProps) {
     const dateFormatted = new Date().toLocaleDateString('en-US', {
         weekday: 'long',

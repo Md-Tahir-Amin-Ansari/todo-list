@@ -21,40 +21,6 @@ export interface Task extends TaskInput {
     id: number,
     completed: boolean
 }
-export interface TodayViewProps {
-    tasks: Task[];
-    tasksLoading: boolean;
-    onToggleTask: (id: number) => void;
-    onEditTask: (task: Task) => void;
-    onOpenCreateModal: () => void;
-}
-export interface AllTasksViewProps {
-    tasks: Task[];
-    tasksLoading: boolean;
-    onToggleTask: (id: number) => void;
-    onEditTask: (task: Task) => void;
-    onOpenCreateModal: () => void;
-}
-
-export interface SidebarProps {
-    currentView: ViewType;
-    onSelectView: (view: ViewType) => void;
-    user?: User;
-    todayCount?: number;
-    allCount?: number;
-}
-export interface TaskModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSave: (payload: TaskInput) => void;
-    onDelete?: () => void;
-    task?: Task;
-}
-export interface AuthCardProps {
-    onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
-    errorMessage?: string;
-    loading?: boolean;
-}
 
 /**
  * UpdateTaskPayload:

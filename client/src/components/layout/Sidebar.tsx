@@ -8,16 +8,21 @@ import {
     SidebarFooter,
     SidebarGroup
 } from '@/components/tailgrids/core/sidebar';
+import type { User, ViewType } from '@/types';
 import {
     Calendar,
     Gear1,
     Home
 } from "@tailgrids/icons";
-import type { SidebarProps } from '@/types';
 
 
-
-
+export interface SidebarProps {
+    currentView: ViewType;
+    onSelectView: (view: ViewType) => void;
+    user?: User;
+    todayCount?: number;
+    allCount?: number;
+}
 
 const NAV_ITEMS = [
     { id: 'today', label: 'Today', icon: Calendar },

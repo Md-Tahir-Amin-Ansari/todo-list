@@ -3,10 +3,16 @@ import { TaskFilters } from '@/components/todos/TaskFilters';
 import { TaskItem } from '@/components/todos/TaskItem';
 import { EmptyState } from '@/components/layout/EmptyState';
 import { Spinner } from '@/components/tailgrids/core/spinner';
-import type { FilterType, AllTasksViewProps } from '@/types';
+import type { FilterType, Task } from '@/types';
 import { Button } from '@/components/tailgrids/core/button';
 
-
+export interface AllTasksViewProps {
+    tasks: Task[];
+    tasksLoading: boolean;
+    onToggleTask: (id: number) => void;
+    onEditTask: (task: Task) => void;
+    onOpenCreateModal: () => void;
+}
 export default function AllTasksView({ tasks, tasksLoading, onToggleTask, onEditTask, onOpenCreateModal }: AllTasksViewProps) {
     // inside AllTasksView:
     const [searchQuery, setSearchQuery] = useState('');
