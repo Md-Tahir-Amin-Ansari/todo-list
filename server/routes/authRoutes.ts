@@ -1,3 +1,9 @@
+/**
+ * @file authRoutes.ts
+ * @brief authentication routes
+ * @details Contain resiter, login, logout and me Routes for user mangement.
+ */
+
 import { Router, type Request, type Response } from 'express';
 import argon2 from 'argon2';
 import { createUser, findUserByName, findUserById, DuplicateUserError } from '../repositories/userRepository.ts';
@@ -9,6 +15,18 @@ import { invalidInputError, internalServerError, invalidCredential, unauthorized
 export const authRouter = Router();
 
 // registartion route
+/**
+ * @brief Registers a new user.
+ * @details Hashes password with Argon2id, persists user to SQLite, initiates a session,
+ *          and attaches an HTTP-only session cookie.
+ * @param req Incoming Express request containing `{ name, email, password }` in req.body.
+ * @param res Outgoing Express response returning status 201 with the created user object.
+ * @returns void
+ * @throws 400 Bad Request if validation schema fails.
+ * @throws 409 Conflict if the username or email already exists.
+ * @throws 500 Internal Server Error if hashing or database insertion fails.
+ * @note Sets an HTTP-only secure cookie `sessionID` on the client.
+ */
 authRouter.post('/register', async (req: Request, res: Response) => {
     try {
         const user = req.body
@@ -51,6 +69,15 @@ authRouter.post('/register', async (req: Request, res: Response) => {
 })
 
 // login route
+/**
+ * @brief login user
+ * @details login a user by validating their user name and password
+ * @param req Incoming Express request containing user name and password
+ * @param res Outgoing Express response containing cookie along with user id  and name, 200 Success on logging the user.
+ * @returns void
+ * @throws 500 Internal Server Error if DB query fails.
+ * @throws 400 Internal on invalid input.
+ */
 authRouter.post('/login', async (req: Request, res: Response) => {
     try {
         const userInput = req.body
@@ -100,6 +127,16 @@ authRouter.post('/login', async (req: Request, res: Response) => {
 })
 
 // logout route
+/**
+ * @brief Logs out the currently authenticated user.
+ * @details Removes the active session from the database and clears the `sessionID` cookie.
+ * @param req Incoming Express request with `sessionID` cookie.
+ * @param res Outgoing Express response returning status 200 with confirmation message.
+ * @returns void
+ * @throws 401 Unauthorized if the session is invalid or user is unauthenticated.
+ * @throws 500 Internal Server Error if DB operation fails.
+ * @note Clears the `sessionID` cookie from the client.
+ */
 authRouter.post('/logout', authenticate, (req: Request, res: Response) => {
     try {
         const sessionID = req.cookies.sessionID
@@ -118,7 +155,16 @@ authRouter.post('/logout', authenticate, (req: Request, res: Response) => {
         res.status(500).json(internalServerError);
     }
 })
-
+// me route 
+/**
+ * @brief tells who is user
+ * @details return user details to help on refresh
+ * @param req Incoming Express request containing user id in cookie
+ * @param res Outgoing Express response containing user data, 200 Return user data.
+ * @returns void
+ * @throws 500 Internal Server Error if DB query fails.
+ * @throws 401 Internal on invalid session.
+ */
 authRouter.get('/me', authenticate, (req: Request, res: Response) => {
     try {
         if (!req.user_id) return res.status(401).json(unauthorized);
