@@ -6,7 +6,11 @@
     "server/routes/authRoutes.ts",
     "server/middleware/middleware.ts",
     "server/types.ts",
-    "server/schema/schema.ts"
+    "server/schema/schema.ts",
+    "server/db/database.ts",
+    "server/repositories/todoRepository.ts",
+    "server/repositories/userRepository.ts",
+    "server/repositories/sessionRepository.ts"
   ],
   "entryPointStrategy": "resolve",
   "out": "docs/api",

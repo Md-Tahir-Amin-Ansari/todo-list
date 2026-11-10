@@ -1,12 +1,26 @@
+/**
+ * @file todoRepository.ts
+ * @brief Manages db interaction regarding todo management
+ */
+
 import { db } from '../db/database.ts';
 import type { TodoAPP, TodoDB, CreateTodoInput, TodoUpdateInput } from '../types.ts';
 
-
+/**
+ * @brief Retrieves all tasks for a specific user.
+ * @param user_id ID of the owner user.
+ * @returns Array of TodoAPP objects.
+ */
 export function getAllTodos(user_id: number): TodoAPP[] {
     const result = db.prepare(`SELECT * FROM todos WHERE user_id = ?`).all(user_id) as Array<TodoDB>
     return mapTodos(result)
 }
-
+/**
+ * @brief Retrieves a single task by ID ensuring it belongs to the user.
+ * @param id Task ID.
+ * @param user_id Owner user ID.
+ * @returns TodoAPP or undefined if not found.
+ */
 export function getTodo(id: number, user_id: number): TodoAPP | undefined {
     const result = db.prepare(`SELECT * FROM todos WHERE id = ? AND user_id=?`).get(id, user_id) as TodoDB | undefined
     if (result) {
@@ -15,7 +29,12 @@ export function getTodo(id: number, user_id: number): TodoAPP | undefined {
         return undefined
     }
 }
-
+/**
+ * @brief Inserts a new task into SQLite.
+ * @param user_id Owner user ID.
+ * @param data Validated CreateTodoInput (name, priority, dueDate, tag).
+ * @returns The created TodoAPP with auto-generated ID.
+ */
 export function postTodo(user_id: number, data: CreateTodoInput): TodoAPP {
     const priority = data.priority ?? 'medium';
     const dueDate = data.dueDate ?? null;
@@ -27,10 +46,23 @@ export function postTodo(user_id: number, data: CreateTodoInput): TodoAPP {
     const resultRow = responseStatement.get(result.lastInsertRowid, user_id) as TodoDB
     return mapTodo(resultRow)
 }
+/**
+ * @brief Deletes a task by ID scoped to the authenticated user.
+ * @param id Task ID to delete.
+ * @param user_id Owner user ID.
+ * @returns true if a row was deleted, false otherwise.
+ */
 export function deleteTodo(id: number, user_id: number): boolean {
     const result = db.prepare(`DELETE FROM todos WHERE id = ? AND user_id = ?`).run(id, user_id)
     return Boolean(result.changes)
 }
+/**
+ * @brief Dynamically updates provided fields of an existing task.
+ * @param id Task ID.
+ * @param user_id Owner user ID.
+ * @param updates Partial TodoUpdateInput containing changed fields.
+ * @returns true if row was modified, false if no fields changed or task not found.
+ */
 export function patchTodo(id: number, user_id: number, updates: TodoUpdateInput): boolean {
     const fields: string[] = [];
     const values: (string | number | null)[] = [];
@@ -62,11 +94,19 @@ export function patchTodo(id: number, user_id: number, updates: TodoUpdateInput)
     const result = db.prepare(sql).run(...values)
     return Boolean(result.changes)
 }
-
+/**
+ * @brief Converts SQLite snake_case / integer boolean rows (TodoDB) to application camelCase objects (TodoAPP).
+ * @param list Array of todos in db format
+ * @returns An array of todo in app format
+ */
 function mapTodos(list: Array<TodoDB>): TodoAPP[] {
     return list.map(todo => mapTodo(todo))
 }
-
+/**
+ * @brief Converts SQLite snake_case / integer boolean rows (TodoDB) to application camelCase objects (TodoAPP).
+ * @param todo A todo in db format
+ * @returns A todo in app format
+ */
 function mapTodo(todo: TodoDB): TodoAPP {
     return { id: todo.id, name: todo.name, completed: Boolean(todo.completed), dueDate: todo.due_date ?? null, priority: todo.priority ?? 'medium', tag: todo.tag ?? null }
 }
