@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "docs": "typedoc && npm run docs --prefix client"
   },
   "keywords": [],
@@ -22,6 +23,9 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "typedoc": "^0.28.16"
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.2",
+    "typedoc": "^0.28.16",
+    "vitest": "^5.1.0"
   }
 }
