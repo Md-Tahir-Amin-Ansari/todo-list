@@ -8,31 +8,25 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    onSubmit: { action: 'submitted' },
+  args: {
+    onSubmit: (data, isSignUp) => console.log('Submitted:', data, 'isSignUp:', isSignUp),
   },
 } satisfies Meta<typeof AuthCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    loading: false,
-    errorMessage: '',
-  },
-};
-
+/** Default Sign-up state */
+export const Default: Story = {};
+/** When authentication request is in flight */
 export const Loading: Story = {
   args: {
     loading: true,
-    errorMessage: '',
   },
 };
-
+/** When backend returns an authentication error */
 export const WithError: Story = {
   args: {
-    loading: false,
-    errorMessage: 'Invalid credentials. Please try again.',
+    errorMessage: 'Invalid username or password. Please try again.',
   },
 };

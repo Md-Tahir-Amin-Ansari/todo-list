@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { TextField } from "../tailgrids/core/text-field";
 import type { AuthCredentials } from '@/types';
 import { LoginSchema, SignUpSchema } from "@/schema";
+import { Spinner } from "../tailgrids/core/spinner";
 export interface AuthCardProps {
     onSubmit: (data: AuthCredentials, isSignUp: boolean) => void;
     errorMessage?: string;
@@ -100,7 +101,14 @@ export default function AuthCard({ onSubmit, errorMessage, loading }: AuthCardPr
                             </p>
                         )}
                     </div>
-                    <Button type='submit' variant="primary" className='w-full my-3' pending={loading}>{isSignUp ? "Create account" : "Log in"}</Button>
+                    <Button type='submit' variant="primary" className='w-full my-3 h-10' disabled={loading} pending={loading}>
+                        {loading ? (
+                            <Spinner size="sm" className="text-white" />
+                        ) : (
+                            <span>{isSignUp ? "Create account" : "Log in"}</span>
+                        )}
+                    </Button>
+
                     <div className="flex items-center justify-center gap-1.5  text-text-100">
                         <span>{isSignUp ? "Have an account?" : "New here?"}</span>
                         <button className="bg-transparent border-none p-0 cursor-pointer font-bold text-primary-500 hover:text-primary-600 hover:underline transition" type="button" onClick={() => setIsSignUp(!isSignUp)}>{isSignUp ? "Log in" : "Sign up"}</button>
