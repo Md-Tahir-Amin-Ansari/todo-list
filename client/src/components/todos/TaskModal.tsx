@@ -132,7 +132,7 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, task }: TaskModal
                     <div className="flex flex-col gap-1.5">
                         <FieldLabel>Tag</FieldLabel>
                         <Select
-                            value={tag || null}
+                            value={tag || undefined}
                             onChange={(val) => setTag(val ? String(val) : '')}
                         >
                             <SelectTrigger>

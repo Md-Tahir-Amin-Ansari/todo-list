@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
 
 type PropsType = ComponentProps<"svg"> & {
   size?: number;

@@ -50,7 +50,7 @@ export default function App() {
       <div className="flex min-h-screen items-center justify-center bg-background-50 p-4">
         <AuthCard
           onSubmit={handleAuth}
-          errorMessage={authError}
+          errorMessage={authError ?? undefined}
           loading={authLoading}
         />
       </div>
@@ -101,7 +101,7 @@ export default function App() {
       </main>
 
 
-      <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSave={handleCreateTask} onDelete={handleDeleteTask} task={editingTask} />
+      <TaskModal isOpen={isModalOpen} onClose={handleCloseModal} onSave={handleCreateTask} onDelete={handleDeleteTask} task={editingTask ?? undefined} />
     </SidebarProvider>
   );
 }
